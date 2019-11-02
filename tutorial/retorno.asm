@@ -15,3 +15,5 @@ section .text
 
     _start:
         mov eax, SYS_EXIT
+        mov ebx, 9
+        int 0x80
