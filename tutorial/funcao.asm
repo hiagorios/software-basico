@@ -1,4 +1,4 @@
-;
+;Funcoes que incrementam em 1 o valor de v1
 
 ;ax - acumulador pra operacoes numericas
 ;bx - acumulador de registro base
