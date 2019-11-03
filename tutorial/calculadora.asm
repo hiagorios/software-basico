@@ -1,13 +1,12 @@
 ;Eu nao acredito que vou realmente fazer uma calculadora em assembly
 
-%include        'lib.asm'
+%include 'lib.asm'
 
 section .data
-
     tit db 10,'+--------------',10,'Calculadora',10,'--------------+',0
     msgValor1 db 10,'Valor 1: ', 0
     msgValor2 db 10,'Valor 2: ', 0
-    opt1 db 10,'1. Adicionar: ', 
+    opt1 db 10,'1. Adicionar: ', 0
     opt2 db 10,'2. Subtrair: ', 0
     opt3 db 10,'3. Multiplicar: ', 0
     opt4 db 10,'4. Dividir: ', 0
@@ -16,15 +15,14 @@ section .data
 
 section .bss
     opt resb 2
-    num1 resb 10
-    num2 resb 10
-    result resb 10
+    num1 resb 5
+    num2 resb 5
+    result resb 5
 
 section .text
 global _start
 
 _start:
-    ;Mostrando titulo
     mov eax, tit
     call stringPrintLF
 
@@ -58,16 +56,23 @@ _start:
     mov edx, 2
     call input
 
-    mov ah, opt
-    sub ah, '0' ;convertendo a string pra inteiro
+    mov eax, num1
+    call atoi
+    ; isso nao ta funcionando, nao consigo mover o valor convertido de eax pra num1 de volta
+    mov [num1], eax
+    mov eax, num1
+    call intPrintLF
 
-    cmp ah, 1
+    mov eax, opt
+    call atoi
+
+    cmp eax, 1
     je adicionar
-    cmp ah, 2
+    cmp eax, 2
     je subtrair
-    cmp ah, 3
+    cmp eax, 3
     je multiplicar
-    cmp ah, 4
+    cmp eax, 4
     je dividir
 
     mov eax, msgErro
