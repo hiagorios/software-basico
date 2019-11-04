@@ -178,6 +178,21 @@ atoi:
         pop     ebx             ; restore ebx from the value we pushed onto the stack at the start
         ret
 
+;------------------------------
+; void inputString()
+; Get input from user
+inputString:
+    push ecx
+    push edx
+    mov ecx, eax
+    mov edx, ebx
+    mov eax, SYS_READ
+    mov ebx, STD_IN
+    int 0x80
+    pop edx
+    pop ecx
+    ret
+
 ;------------------------------------------
 ; void exit()
 ; Exit program and restore resources

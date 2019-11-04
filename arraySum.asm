@@ -11,9 +11,11 @@ section .data
     msgInput1   db  'Digite o ', NULL
     msgInput2   db  'o elemento do vetor', LF, NULL
     LOOP_END    equ 4
+    MAX_INPUT equ 1
 
 section .bss
-    array resb 4
+    array resb 10
+    aux resb MAX_INPUT
 
 section .text
 
@@ -35,21 +37,12 @@ _start:
         call stringPrint
 
         ;Getting user input
+        mov eax, aux
+        mov ebx, MAX_INPUT
+        call inputString
 
         ;Checking end of loop
         cmp ecx, LOOP_END
         jne inputLoop
 
     call exit
-
-output:
-    mov eax, SYS_WRITE
-    mov ebx, STD_OUT
-    int 0x80
-    ret
-
-input:
-    mov eax, SYS_READ
-    mov ebx, STD_IN
-    int 0x80
-    ret
