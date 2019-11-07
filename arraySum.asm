@@ -11,7 +11,7 @@ section .data
     msgInput1   db  'Digite o ', NULL
     msgInput2   db  'o elemento do vetor', LF, NULL
     LOOP_END    equ 4
-    MAX_INPUT equ 1
+    MAX_INPUT equ 2
 
 section .bss
     array resb 10
