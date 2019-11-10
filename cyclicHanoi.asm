@@ -24,8 +24,10 @@ section .text
 
     _start:
 
-        push ebp                        ; salva o registrador base na pilha
-        mov ebp, esp                    ; ebp recebe o ponteiro para o topo da pilha (esp)
+        ;Criando uma nova stack frame
+        push ebp
+        mov ebp,esp
+        ;---------------------------
 
         ; Pedindo a quantidade de discos
         mov eax, prompt
@@ -46,10 +48,200 @@ section .text
         push dword 0x1                  ; ''    ''    '' origem na pilha
         push eax                        ; Colocando a qnt de discos na pilha
 
-        call funcaoHanoi
+        ;call funcaoHanoi
+        call clock
 
         ;Fim
         call exit
+
+    ;clock (n, from, to, aux)
+    ;n = ebp+8
+    ;from = ebp+12
+    ;to = ebp+16
+    ;aux = ebp+20
+    clock:
+        ;Criando uma nova stack frame
+        push ebp
+        mov ebp,esp
+        ;---------------------------
+
+        ;--Verifica se é o caso base--
+        ;eax recebe o valor do primeiro elemento da pilha (n atual)
+        mov eax,[ebp+8]
+        ;Compara n atual com 0x0 = 0 em hexadecimal
+        cmp eax,0x0
+        ;Se n <= 0, é o caso base e vai para o fim dessa chamada
+        jle fim
+        ;------------------------------
+
+        ;-------RECURSIVIDADE---------
+        ;Colocando o que será o pino auxiliar na pilha
+        push dword [ebp+16]
+        ;Colocando o que será o pino de destino na pilha
+        push dword [ebp+20]
+        ;Colocando o que será o pino de origem na pilha
+        push dword [ebp+12]
+        ;Decrementa n e poe na pilha
+        dec eax
+        push dword eax
+        call anti
+        ;-------RECURSIVIDADE---------
+
+        ;-------IMPRIME MOVIMENTO ------
+        ;Faz um pop de 3x4bytes
+        add esp,12
+        ;Colocando o que será o pino de destino na pilha
+        push dword [ebp+16]
+        ;Colocando o que será o pino de origem na pilha
+        push dword [ebp+12]
+        ;Coloca n atual na pilha
+        push dword [ebp+8]
+        call imprimePasso
+        ;-------IMPRIME MOVIMENTO ------
+        
+        ;-------RECURSIVIDADE---------
+        ;Faz um pop de 3x4bytes
+        add esp,12
+        ;Colocando o que será o pino auxiliar na pilha
+        push dword [ebp+12]
+        ;Colocando o que será o pino de destino na pilha
+        push dword [ebp+16]
+        ;Colocando o que será o pino de origem na pilha
+        push dword [ebp+20]
+        ;Move n para eax
+        mov eax,[ebp+8]
+        ;Decrementa 1 de eax (n atual)
+        dec eax
+        push dword eax
+        call anti
+        ;-------RECURSIVIDADE---------
+        ret
+
+    ;anti (n, from, to, aux)
+    ;n = ebp+8
+    ;from = ebp+12
+    ;to = ebp+16
+    ;aux = ebp+20
+    anti:
+        ;Criando uma nova stack frame
+        push ebp
+        mov ebp,esp
+        ;---------------------------
+
+        ;--Verifica se é o caso base--
+        ;eax recebe o valor do primeiro elemento da pilha (n atual)
+        mov eax,[ebp+8]
+        ;Compara n atual com 0x0 = 0 em hexadecimal
+        cmp eax,0x0
+        ;Se n <= 0, é o caso base e vai para o fim dessa chamada
+        jle fim
+        ;------------------------------
+
+        ;-------RECURSIVIDADE---------
+        ;Colocando o que será o pino auxiliar na pilha
+        push dword [ebp+20]
+        ;Colocando o que será o pino de destino na pilha
+        push dword [ebp+16]
+        ;Colocando o que será o pino de origem na pilha
+        push dword [ebp+12]
+        ;Decrementa n e poe na pilha
+        dec eax
+        push dword eax
+        call anti
+        ;-------RECURSIVIDADE---------
+
+        ;-------IMPRIME MOVIMENTO ------
+        ;Faz um pop de 3x4bytes
+        add esp,12
+        ;Colocando o que será o pino de destino na pilha
+        push dword [ebp+16]
+        ;Colocando o que será o pino de origem na pilha
+        push dword [ebp+12]
+        ;Coloca n atual na pilha
+        push dword [ebp+8]
+        call imprimePasso
+        ;-------IMPRIME MOVIMENTO ------
+        
+        ;-------RECURSIVIDADE---------
+        ;Faz um pop de 3x4bytes
+        add esp,12
+        ;Colocando o que será o pino auxiliar na pilha
+        push dword [ebp+20]
+        ;Colocando o que será o pino de destino na pilha
+        push dword [ebp+12]
+        ;Colocando o que será o pino de origem na pilha
+        push dword [ebp+16]
+        ;Move n para eax
+        mov eax,[ebp+8]
+        ;Decrementa 1 de eax (n atual)
+        dec eax
+        push dword eax
+        call clock
+        ;-------RECURSIVIDADE---------
+
+        ;-------IMPRIME MOVIMENTO ------
+        ;Faz um pop de 3x4bytes
+        add esp,12
+        ;Colocando o que será o pino de destino na pilha
+        push dword [ebp+20] ;talvez nao esteja certo isso
+        ;Colocando o que será o pino de origem na pilha
+        push dword [ebp+12]
+        ;Coloca n atual na pilha
+        push dword [ebp+8]
+        call imprimePasso
+        ;-------IMPRIME MOVIMENTO ------
+
+        ;-------RECURSIVIDADE---------
+        ;Colocando o que será o pino auxiliar na pilha
+        push dword [ebp+20]
+        ;Colocando o que será o pino de destino na pilha
+        push dword [ebp+16]
+        ;Colocando o que será o pino de origem na pilha
+        push dword [ebp+12]
+        ;Decrementa n e poe na pilha
+        dec eax
+        push dword eax
+        call anti
+        ;-------RECURSIVIDADE---------
+        ret
+
+    fim:
+        ;Voltando à stack frame anterior
+        mov esp,ebp
+        pop ebp
+        ;--------------------------------
+        ret
+
+    imprimePasso:
+        ;Criando uma nova stack frame
+        push ebp
+        mov ebp,esp
+        ;---------------------------
+
+        ;Pino auxiliar
+        mov eax, [ebp + 12]
+        ;Conversao para ASCII
+        add al, '0'
+        ;Movimento: movendo o conteudo de al para [pino_origem]
+        mov [pino_origem], al
+
+        ;Pino de destino
+        mov eax, [ebp + 16]
+        ;Conversao para ASCII
+        add al, '0'
+        ;Movimento: movendo o conteudo de al para [pino_destino]
+        mov [pino_destino], al
+
+        ;Imprime a mensagem de movimento de disco
+        mov eax, msg
+        mov ebx, lenght
+        call stringPrintLF
+
+        ;Voltando à stack frame anterior
+        mov esp,ebp
+        pop ebp
+        ;--------------------------------
+        ret
 
     funcaoHanoi: 
         ;[ebp+8] = n (número de discos iniciais)
@@ -58,16 +250,16 @@ section .text
         ;[ebp+20] = pino de destino
         ;link: http://www.devmedia.com.br/torres-de-hanoi-solucao-recursiva-em-java/23738
 
-        ;Salva ebp na pilha
+        ;Criando uma nova stack frame
         push ebp
-        ;ebp recebe o endereço do topo da pilha
         mov ebp,esp
+        ;---------------------------
 
-        ;Pega o a posição do primeiro elemento da pilha e mov para eax
+        ;eax recebe o valor do primeiro elemento da pilha (n atual)
         mov eax,[ebp+8]
-        ;Compara o valor que de eax (n atual) com 0x0 = 0 em hexadecimal
+        ;Compara n atual com 0x0 = 0 em hexadecimal
         cmp eax,0x0
-        ;Se eax <= 0, é o caso base e vai para o fim, desempilhar
+        ;Se n <= 0, é o caso base e vai para o fim dessa chamada
         jle fim
         
         ;PASSO1 - RECURSIVIDADE
@@ -93,7 +285,7 @@ section .text
         push dword [ebp+12]
         ; coloca na pilha o pino de o numero de disco inicial
         push dword [ebp+8]
-        call imprime
+        call imprimePasso
         
         ;PASSO3 - RECURSIVIDADE
         ;Faz um pop de 3x4bytes - Último e primeiro parâmetro
@@ -110,41 +302,3 @@ section .text
         dec eax
         push dword eax                  ; poe eax na pilha
         call funcaoHanoi                ; (recursividade)
-
-    fim:
-        ;Move o valor de ebp para esp
-        mov esp,ebp
-        ;Desempilha o ebp
-        pop ebp
-        ret
-
-    imprime:
-        ;Empilha ebp
-        push ebp
-        ;ebp recebe o endereço do topo da pilha
-        mov ebp, esp
-
-        ;Pino auxiliar
-        mov eax, [ebp + 12]
-        ;Conversao para ASCII
-        add al, '0'
-        ;Movimento: movendo o conteudo de al para [pino_origem]
-        mov [pino_origem], al
-
-        ;Pino de destino
-        mov eax, [ebp + 16]
-        ;Conversao para ASCII
-        add al, '0'
-        ;Movimento: movendo o conteudo de al para [pino_destino]
-        mov [pino_destino], al
-
-        ;Imprime a mensagem de movimento de disco
-        mov eax, msg
-        mov ebx, lenght
-        call stringPrintLF
-
-        ;Copiando o valor do registrador EBP para o ESP
-        mov esp, ebp
-        ; Recupera valor do topo da pilha para o registrador EBP
-        pop ebp
-        ret

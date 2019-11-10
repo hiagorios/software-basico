@@ -1,29 +1,29 @@
 def printStep(fromStake, wise, indent):
     print(indent*'  ' + wise + ' - Move a ring from stake '+ str(fromStake))
 
-def clock (n, x, y, z, indent):
+def clock (n, fromS, toS, auxS, indent):
     if n > 0:
         global step
         thisStep = step
-        print(indent*'  ' + '-'+ str(thisStep) +'--START-C--- Moving ' + str(n) + ' disks from ' + str(x) + ' to ' + str(y))
+        print(indent*'  ' + '-'+ str(thisStep) +'--START-C--- Moving ' + str(n) + ' disks from ' + str(fromS) + ' to ' + str(toS))
         step = step + 1
-        anti(n-1, x, z, y, indent + 2)
-        printStep(x, 'C', indent + 2)
-        anti(n-1, z, y, x, indent + 2)
-        print(indent*'  ' + '-'+ str(thisStep) +'--END-C-' + str(n) + '-'+ str(x)+'-'+ str(y)+'-'+ str(z)+'-------------------------')
+        anti(n-1, fromS, auxS, toS, indent + 2)
+        printStep(fromS, 'C', indent + 2)
+        anti(n-1, auxS, toS, fromS, indent + 2)
+        print(indent*'  ' + '-'+ str(thisStep) +'--END-C-' + str(n) + '-'+ str(fromS)+'-'+ str(toS)+'-'+ str(auxS)+'-------------------------')
 
-def anti (n, x, y, z, indent):
+def anti (n, fromS, toS, auxS, indent):
     if n > 0:
         global step
         thisStep = step
-        print(indent*'  ' + '-'+ str(thisStep) +'--START-A--- Moving ' + str(n) + ' disks from ' + str(x) + ' to ' + str(y))
+        print(indent*'  ' + '-'+ str(thisStep) +'--START-A--- Moving ' + str(n) + ' disks from ' + str(fromS) + ' to ' + str(toS))
         step = step + 1
-        anti(n-1, x, y, z, indent + 2)
-        printStep(x, 'C', indent + 2)
-        clock(n-1, y, x, z, indent + 2)
-        printStep(z, 'C', indent + 2)
-        anti(n-1, x, y, z, indent + 2)
-        print(indent*'  ' + '-'+ str(thisStep) +'--END-C-' + str(n) + '-'+ str(x)+'-'+ str(y)+'-'+ str(z)+'-------------------------')
+        anti(n-1, fromS, toS, auxS, indent + 2)
+        printStep(fromS, 'C', indent + 2)
+        clock(n-1, toS, fromS, auxS, indent + 2)
+        printStep(auxS, 'C', indent + 2)
+        anti(n-1, fromS, toS, auxS, indent + 2)
+        print(indent*'  ' + '-'+ str(thisStep) +'--END-C-' + str(n) + '-'+ str(fromS)+'-'+ str(toS)+'-'+ str(auxS)+'-------------------------')
 
 n = int(input('Enter the number of disks: '))
 fromStake = int(input('Enter the FROM stake: '))
