@@ -7,11 +7,13 @@ section .data
    
     prompt db 'Digite a quantidade de discos: ', NULL
 
-    msg:
-                          db        "ORIGEM: "                      
-        pino_origem:      db        " "  
-                          db        " | DESTINO: "     
-        pino_destino:     db        " ", NULL
+    nAtual db 'N atual: ', NULL
+
+    outputMovimento:
+                          db        "Movendo um disco de "
+        origem:      db        " "
+                          db        " para "
+        destino:     db        " ", NULL
 
 section .bss
 
@@ -235,20 +237,22 @@ section .text
         mov eax, [ebp+12]
         ;Conversao para ASCII
         add al, '0'
-        ;Movimento: movendo o conteudo de al para [pino_origem]
-        mov [pino_origem], al
+        ;Movimento: movendo o conteudo de al para [origem]
+        mov [origem], al
 
         ;Pino de destino
         mov eax, [ebp+16]
         ;Conversao para ASCII
         add al, '0'
-        ;Movimento: movendo o conteudo de al para [pino_destino]
-        mov [pino_destino], al
+        ;Movimento: movendo o conteudo de al para [destino]
+        mov [destino], al
 
         ;Imprime a mensagem de movimento de disco
-        mov eax, msg
+        mov eax, outputMovimento
         call stringPrintLF
 
+        mov eax, nAtual
+        call stringPrint
         mov eax, [ebp+8]
         call intPrintLF
 
