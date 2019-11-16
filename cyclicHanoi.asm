@@ -221,7 +221,7 @@ section .text
         push dword [ebp+16]
         ;Move n para eax
         mov eax,[ebp+8]
-        ;Decrementa 1 de eax (n atual)
+        ;Decrementa n e poe na pilha
         dec eax
         push dword eax
         call clock
@@ -250,6 +250,8 @@ section .text
         push dword [ebp+16]
         ;Colocando o que será o pino de origem na pilha
         push dword [ebp+12]
+        ;Move n para eax
+        mov eax,[ebp+8]
         ;Decrementa n e poe na pilha
         dec eax
         push dword eax
@@ -291,10 +293,10 @@ section .text
         mov eax, outputMovimento
         call stringPrintLF
 
-        mov eax, nAtual
-        call stringPrint
-        mov eax, [ebp+8]
-        call intPrintLF
+        ;mov eax, nAtual
+        ;call stringPrint
+        ;mov eax, [ebp+8]
+        ;call intPrintLF
 
         ;Voltando à stack frame anterior
         mov esp,ebp
