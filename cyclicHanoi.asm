@@ -5,8 +5,10 @@
 
 section .data
    
-    prompt db 'Digite a quantidade de discos: ', NULL
-
+    promptDiscos db 'Digite a quantidade de discos: ', NULL
+    promptOrigem db 'Digite o pino de origem: ', NULL
+    promptAuxiliar db 'Digite o pino auxiliar: ', NULL
+    promptDestino db 'Digite o pino de destino: ', NULL
     nAtual db 'N atual: ', NULL
 
     outputMovimento:
@@ -17,7 +19,10 @@ section .data
 
 section .bss
 
-    qntDiscos resb 2
+    qntDiscos resb 4
+    pinoOrigem resb 4
+    pinoAuxiliar resb 4
+    pinoDestino resb 4
     
 section .text
 
@@ -31,23 +36,58 @@ section .text
         ;---------------------------
 
         ; Pedindo a quantidade de discos
-        mov eax, prompt
+        mov eax, promptDiscos
         call stringPrintLF
-
         ; Input da quantidade de discos
         mov eax, qntDiscos
-        mov ebx, 5
+        mov ebx, 4
         call inputString
-        
         ; Transformando a qnt de string para inteiro
         mov eax, qntDiscos
         call atoi
+        mov [qntDiscos], eax
 
-        ; REFERENCIA PARA AS 3 PILHAS (3 PINOS) DA TORRE DE HANOI EM ORDEM
-        push dword 0x2                  ; Criando o pino auxiliar na pilha
-        push dword 0x3                  ; ''    ''    '' destino na pilha
-        push dword 0x1                  ; ''    ''    '' origem na pilha
-        push eax                        ; Colocando a qnt de discos na pilha
+        ; Pedindo o pino de origem
+        mov eax, promptOrigem
+        call stringPrintLF
+        ; Input da quantidade de discos
+        mov eax, pinoOrigem
+        mov ebx, 4
+        call inputString
+        ; Transformando o pino de origem de string para inteiro
+        mov eax, pinoOrigem
+        call atoi
+        mov [pinoOrigem], eax
+
+        ; Pedindo o pino auxiliar
+        mov eax, promptAuxiliar
+        call stringPrintLF
+        ; Input da quantidade de discos
+        mov eax, pinoAuxiliar
+        mov ebx, 4
+        call inputString
+        ; Transformando o pino auxiliar de string para inteiro
+        mov eax, pinoAuxiliar
+        call atoi
+        mov [pinoAuxiliar], eax
+
+        ; Pedindo o pino de destino
+        mov eax, promptDestino
+        call stringPrintLF
+        ; Input da quantidade de discos
+        mov eax, pinoDestino
+        mov ebx, 4
+        call inputString
+        ; Transformando o pino de destino de string para inteiro
+        mov eax, pinoDestino
+        call atoi
+        mov [pinoDestino], eax
+
+        ; Criando o escopo da chamada de clock
+        push dword [pinoAuxiliar]       ; Criando o pino auxiliar na pilha
+        push dword [pinoDestino]        ; ''    ''    '' destino na pilha
+        push dword [pinoOrigem]         ; ''    ''    '' origem na pilha
+        push dword [qntDiscos]          ; Colocando a qnt de discos na pilha
 
         call clock
 
