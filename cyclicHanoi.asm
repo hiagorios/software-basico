@@ -1,6 +1,18 @@
 ; Projeto para a disciplina Software Básico 2019.2 da UESC
 ; Autor: Hiago Rios Cordeiro
 
+;Programar a variante cíclica do algoritmo das
+;torres de Hanói em linguagem de montagem;
+;O algoritmo deverá acessar a pilha para
+;implementar a recursividade típica do problema;
+;O programa deverá solicitar do usuário, via
+;teclado, a configuração inicial das torres, a torre
+;de origem, a torre de destino, e a quantidade de
+;discos a serem movimentados;
+;Para cada movimentação unitária de disco deverá
+;ser impressa na tela uma mensagem informando
+;o disco de origem, e de destino.
+
 %include        'lib.asm'
 
 section .data
