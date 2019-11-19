@@ -1,5 +1,5 @@
 ; Projeto para a disciplina Software Básico 2019.2 da UESC
-; Autor: Hiago Rios Cordeiro
+; Autores: Hiago Rios Cordeiro e João Henrique dos Santos Queiroz
 
 ;Programar a variante cíclica do algoritmo das
 ;torres de Hanói em linguagem de montagem;
@@ -19,7 +19,7 @@ section .data
    
     promptDiscos db 'Digite a quantidade de discos: ', NULL
     promptOrigem db 'Digite o pino de origem: ', NULL
-    promptAuxiliar db 'Digite o pino auxiliar: ', NULL
+    showAuxiliar db 'Pino auxiliar: ', NULL
     promptDestino db 'Digite o pino de destino: ', NULL
     nAtual db 'N atual: ', NULL
 
@@ -71,18 +71,6 @@ section .text
         call atoi
         mov [pinoOrigem], eax
 
-        ; Pedindo o pino auxiliar
-        mov eax, promptAuxiliar
-        call stringPrintLF
-        ; Input da quantidade de discos
-        mov eax, pinoAuxiliar
-        mov ebx, 4
-        call inputString
-        ; Transformando o pino auxiliar de string para inteiro
-        mov eax, pinoAuxiliar
-        call atoi
-        mov [pinoAuxiliar], eax
-
         ; Pedindo o pino de destino
         mov eax, promptDestino
         call stringPrintLF
@@ -95,6 +83,10 @@ section .text
         call atoi
         mov [pinoDestino], eax
 
+        mov ecx, [pinoOrigem]
+        mov ebx, [pinoDestino]
+        call aux
+
         ; Criando o escopo da chamada de clock
         push dword [pinoAuxiliar]       ; Criando o pino auxiliar na pilha
         push dword [pinoDestino]        ; ''    ''    '' destino na pilha
@@ -105,6 +97,20 @@ section .text
 
         ;Fim
         call exit
+    
+    ;aux (from, to)
+    ;aux = 6-from-to (subtração)
+    aux:
+        mov eax, showAuxiliar
+        call stringPrint
+        mov eax, ecx
+        mov ecx, 6
+        sub ecx, eax ;6-from
+        sub ecx, ebx ;(6-from)-to
+        mov eax, ecx 
+        mov [pinoAuxiliar], eax
+        call intPrintLF
+        ret
 
     ;clock (n, from, to, aux)
     ;n = ebp+8
