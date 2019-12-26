@@ -1,0 +1,286 @@
+LF equ 10
+NULL equ 0
+TRUE equ 1
+FALSE equ 0
+EXIT_SUCCESS equ 0
+STD_IN equ 0
+STD_OUT equ 1
+STD_ERR equ 2
+SYS_EXIT equ 1
+SYS_READ equ 3
+SYS_WRITE equ 4
+SYS_OPEN equ 2
+SYS_CLOSE equ 3
+SYS_FORK equ 57
+SYS_CREAT equ 85
+SYS_TIME equ 201
+stringLen:
+push ebx
+mov ebx, eax
+.nextchar:
+cmp byte [eax], 0
+jz .finished
+inc eax
+jmp .nextchar
+.finished:
+sub eax, ebx
+pop ebx
+ret
+stringPrint:
+push edx
+push ecx
+push ebx
+push eax
+call stringLen
+mov edx, eax
+pop eax
+mov ecx, eax
+mov ebx, 1
+mov eax, 4
+int 80h
+pop ebx
+pop ecx
+pop edx
+ret
+stringPrintLF:
+call stringPrint
+push eax
+mov eax, 0Ah
+push eax
+mov eax, esp
+call stringPrint
+pop eax
+pop eax
+ret
+intPrint:
+push eax
+push ecx
+push edx
+push esi
+mov ecx, 0
+.divideLoop:
+inc ecx
+mov edx, 0
+mov esi, 10
+idiv esi
+add edx, 48
+push edx
+cmp eax, 0
+jnz .divideLoop
+.printLoop:
+dec ecx
+mov eax, esp
+call stringPrint
+pop eax
+cmp ecx, 0
+jnz .printLoop
+pop esi
+pop edx
+pop ecx
+pop eax
+ret
+intPrintLF:
+call intPrint
+push eax
+mov eax, 0Ah
+push eax
+mov eax, esp
+call stringPrint
+pop eax
+pop eax
+ret
+atoi:
+push ebx
+push ecx
+push edx
+push esi
+mov esi, eax
+mov eax, 0
+mov ecx, 0
+.multiplyLoop:
+xor ebx, ebx
+mov bl, [esi+ecx]
+cmp bl, 48
+jl .finished
+cmp bl, 57
+jg .finished
+sub bl, 48
+add eax, ebx
+mov ebx, 10
+mul ebx
+inc ecx
+jmp .multiplyLoop
+.finished:
+mov ebx, 10
+div ebx
+pop esi
+pop edx
+pop ecx
+pop ebx
+ret
+inputString:
+push ecx
+push edx
+mov ecx, eax
+mov edx, ebx
+mov eax, SYS_READ
+mov ebx, STD_IN
+int 0x80
+pop edx
+pop ecx
+ret
+exit:
+mov ebx, 0
+mov eax, 1
+int 80h
+ret
+section .data
+promptDiscos db 'Digite a quantidade de discos: ', NULL
+promptOrigem db 'Digite o pino de origem: ', NULL
+showAuxiliar db 'Pino auxiliar: ', NULL
+promptDestino db 'Digite o pino de destino: ', NULL
+nAtual db 'N atual: ', NULL
+outputMovimento:
+db "Movendo um disco de "
+origem: db " "
+db " para "
+destino: db " ", NULL
+section .bss
+qntDiscos resb 4
+pinoOrigem resb 4
+pinoAuxiliar resb 4
+pinoDestino resb 4
+section .text
+global _start
+_start:
+push ebp
+mov ebp,esp
+mov eax, promptDiscos
+call stringPrintLF
+mov eax, qntDiscos
+mov ebx, 4
+call inputString
+mov eax, qntDiscos
+call atoi
+mov [qntDiscos], eax
+mov eax, promptOrigem
+call stringPrintLF
+mov eax, pinoOrigem
+mov ebx, 4
+call inputString
+mov eax, pinoOrigem
+call atoi
+mov [pinoOrigem], eax
+mov eax, promptDestino
+call stringPrintLF
+mov eax, pinoDestino
+mov ebx, 4
+call inputString
+mov eax, pinoDestino
+call atoi
+mov [pinoDestino], eax
+mov ecx, [pinoOrigem]
+mov ebx, [pinoDestino]
+call aux
+push dword [pinoAuxiliar]
+push dword [pinoDestino]
+push dword [pinoOrigem]
+push dword [qntDiscos]
+call clock
+call exit
+aux:
+mov eax, showAuxiliar
+call stringPrint
+mov eax, ecx
+mov ecx, 6
+sub ecx, eax
+sub ecx, ebx
+mov eax, ecx
+mov [pinoAuxiliar], eax
+call intPrintLF
+ret
+clock:
+push ebp
+mov ebp,esp
+mov eax,[ebp+8]
+cmp eax,0x0
+jle fim
+push dword [ebp+16]
+push dword [ebp+20]
+push dword [ebp+12]
+dec eax
+push dword eax
+call anti
+add esp,16
+push dword [ebp+16]
+push dword [ebp+12]
+push dword [ebp+8]
+call imprimePasso
+add esp,12
+push dword [ebp+12]
+push dword [ebp+16]
+push dword [ebp+20]
+mov eax,[ebp+8]
+dec eax
+push dword eax
+call anti
+add esp,16
+jmp fim
+anti:
+push ebp
+mov ebp,esp
+mov eax,[ebp+8]
+cmp eax,0x0
+jle fim
+push dword [ebp+20]
+push dword [ebp+16]
+push dword [ebp+12]
+dec eax
+push dword eax
+call anti
+add esp,16
+push dword [ebp+20]
+push dword [ebp+12]
+push dword [ebp+8]
+call imprimePasso
+add esp,12
+push dword [ebp+20]
+push dword [ebp+12]
+push dword [ebp+16]
+mov eax,[ebp+8]
+dec eax
+push dword eax
+call clock
+add esp,16
+push dword [ebp+16]
+push dword [ebp+20]
+push dword [ebp+8]
+call imprimePasso
+add esp,12
+push dword [ebp+20]
+push dword [ebp+16]
+push dword [ebp+12]
+mov eax,[ebp+8]
+dec eax
+push dword eax
+call anti
+add esp,16
+jmp fim
+fim:
+mov esp,ebp
+pop ebp
+ret
+imprimePasso:
+push ebp
+mov ebp,esp
+mov eax, [ebp+12]
+add al, '0'
+mov [origem], al
+mov eax, [ebp+16]
+add al, '0'
+mov [destino], al
+mov eax, outputMovimento
+call stringPrintLF
+mov esp,ebp
+pop ebp
+ret
