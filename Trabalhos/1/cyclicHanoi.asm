@@ -16,7 +16,7 @@
 %include        'lib.asm'
 
 section .data
-   
+    
     promptDiscos db 'Digite a quantidade de discos: ', NULL
     promptOrigem db 'Digite o pino de origem: ', NULL
     showAuxiliar db 'Pino auxiliar: ', NULL

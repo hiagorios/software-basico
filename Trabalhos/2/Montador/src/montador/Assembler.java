@@ -13,6 +13,17 @@ import java.util.Scanner;
  * @author Hiago Rios Cordeiro
  * @author João Henrique dos Santos Queiroz
  */
+
+/*
+Steps:
+First pass:
+Reads the entire source file, looking only for label definitions
+Then the labels have values assigned to them, according to the LC, and are placed in the symbol table
+No instructions are assembled in this pass
+Second pass:
+The source file is read again, this time the instructions are assembled using
+the symbol table and the opcodes table
+ */
 public class Assembler {
 
     private static HashMap<Integer, String> hashmap = new HashMap<>();
@@ -20,8 +31,16 @@ public class Assembler {
 
     public static void main(String[] args) {
         Assembler asb = new Assembler();
-        asb.readSource("cyclicHanoi.asm");
-        asb.writeFile("output.txt");
+        //asb.readSource("cyclicHanoi.asm");
+        //asb.writeFile("output.txt");
+
+        String test = "mov eax, ebx";
+        System.out.println(asb.getInstructionSize(test));
+        /*
+        for (String s : asb.getArgs(test)) {
+            System.out.println(s);
+        }
+        */
     }
 
     public void readSource(String path) {
@@ -58,38 +77,13 @@ public class Assembler {
             while (reader.hasNextLine()) {
                 String line = reader.nextLine();
 
-                lines.add(line);
+                // something.add(line);
             }
             reader.close();
         } catch (FileNotFoundException e) {
             System.out.println("OP Codes table not found.");
             System.exit(0);
         }
-    }
-
-    public boolean isInclude(String line) {
-        // Testar
-        return line.contains("%include");
-    }
-
-    public boolean isLabel(String line) {
-        //Testar
-        return !line.contains("_") && line.contains(":");
-    }
-
-    public String removeComments(String line) {
-        //Testar
-        return line.split(";")[0];
-    }
-
-    public String removeIdentation(String line) {
-        // Testar
-        return line.trim().replaceAll(" +", " ");
-    }
-
-    public String getIncludeFile(String line) {
-        // Testar
-        return line.split("'")[1].split("'")[0];
     }
 
     public void writeFile(String name) {
@@ -103,5 +97,44 @@ public class Assembler {
             System.out.println("Could not create the file " + name);
             System.exit(-1);
         }
+    }
+
+    public boolean isInclude(String line) {
+        return line.contains("%include");
+    }
+
+    public boolean isLabel(String line) {
+        //Testar
+        return line.contains(":"); // && !line.contains("_");
+    }
+
+    public String removeComments(String line) {
+        return line.split(";")[0];
+    }
+
+    public String removeIdentation(String line) {
+        return line.trim().replaceAll(" +", " ");
+    }
+
+    public String getIncludeFile(String line) {
+        return line.split("'")[1].split("'")[0];
+    }
+
+    public int getInstructionSize(String line) {
+        String[] args = getArgs(line);
+        return 1 + (args.length > 0 ? args.length : 0);
+    }
+
+    public String getMnemonic(String line) {
+        return line.split(" ")[0];
+    }
+
+    public String[] getArgs(String line) {
+        if (getMnemonic(line).equals(line)) {
+            // instruction has no args
+            return new String[0];
+        }
+        String args = line.substring(getMnemonic(line).length() + 1); //separating mnemonic from
+        return args.split(", ");
     }
 }
