@@ -35,35 +35,43 @@ public class Assembler {
         //asb.writeFile("output.txt");
 
         String test = "mov eax, ebx";
-        System.out.println(asb.getInstructionSize(test));
         /*
         for (String s : asb.getArgs(test)) {
             System.out.println(s);
         }
-        */
+         */
     }
 
     public void readSource(String path) {
         Scanner reader;
+        boolean isSectionData = false;
         try {
             reader = new Scanner(new FileReader("src/montador/" + path));
-            Boolean cont = true;
-            while (cont) {
-                if (reader.hasNextLine()) {
-                    String line = removeComments(reader.nextLine());
-                    line = removeIdentation(line);
-                    if (line != null && !line.isEmpty()) {
-                        if (isInclude(line)) {
-                            readSource(getIncludeFile(line));
-                        } else {
-                            lines.add(line);
+            while (reader.hasNextLine()) {
+                String line = removeComments(reader.nextLine());
+                line = removeIdentation(line);
+                if (line != null && !line.isEmpty()) {
+                    if (line.contains("section")) {
+                        isSectionData = line.contains("data");
+                    } else if (isInclude(line)) {
+                        readSource(getIncludeFile(line));
+                    } else {
+                        if (isLabel(line)) {
+                            if (isSectionData) {
+                                // tratar os db que usam label
+                                // ler as proximas linhas até achar o NULL
+                            } else {
+                                addLabel(line);
+                            }
+                        } else if (isConstant(line)) {
+                            addConstant(line);
+                        } else if (isVariable(line)) {
+                            addVariable(line);
                         }
                     }
-                } else {
-                    cont = false;
-                    reader.close();
                 }
             }
+            reader.close();
         } catch (FileNotFoundException e) {
             System.out.println("Source file not found: " + path);
             System.exit(0);
@@ -76,8 +84,7 @@ public class Assembler {
             reader = new Scanner(new FileReader("src/montador/" + path));
             while (reader.hasNextLine()) {
                 String line = reader.nextLine();
-
-                // something.add(line);
+                // opcodesTable.add(line);
             }
             reader.close();
         } catch (FileNotFoundException e) {
@@ -99,25 +106,16 @@ public class Assembler {
         }
     }
 
-    public boolean isInclude(String line) {
-        return line.contains("%include");
+    public void addConstant(String line) {
+        //TODO
     }
 
-    public boolean isLabel(String line) {
-        //Testar
-        return line.contains(":"); // && !line.contains("_");
+    public void addLabel(String line) {
+        //TODO
     }
 
-    public String removeComments(String line) {
-        return line.split(";")[0];
-    }
-
-    public String removeIdentation(String line) {
-        return line.trim().replaceAll(" +", " ");
-    }
-
-    public String getIncludeFile(String line) {
-        return line.split("'")[1].split("'")[0];
+    public void addVariable(String line) {
+        //TODO
     }
 
     public int getInstructionSize(String line) {
@@ -136,5 +134,61 @@ public class Assembler {
         }
         String args = line.substring(getMnemonic(line).length() + 1); //separating mnemonic from
         return args.split(", ");
+    }
+
+    public boolean isLabel(String line) {
+        //Testar
+        return line.contains(":"); // && !line.contains("_");
+    }
+
+    public boolean isVariable(String line) {
+        return line.contains("db");
+    }
+
+    public boolean isConstant(String line) {
+        return line.contains("equ");
+    }
+
+    public boolean isInclude(String line) {
+        return line.contains("%include");
+    }
+
+    public String removeComments(String line) {
+        return line.split(";")[0];
+    }
+
+    public String removeIdentation(String line) {
+        return line.trim().replaceAll(" +", " ");
+    }
+
+    public String getIncludeFile(String line) {
+        return line.split("'")[1].split("'")[0];
+    }
+
+    public int getRegValue(String reg) throws Exception {
+        switch (reg) {
+            case "eax":
+                return 0;
+            case "ebx":
+                return 3;
+            case "ecx":
+                return 1;
+            case "edx":
+                return 2;
+            case "ebp":
+                return 5;
+            case "esp":
+                return 4;
+            case "esi":
+                return 6;
+            case "edi":
+                return 7;
+            case "al":
+                return 0;
+            case "bl":
+                return 3;
+            default:
+                throw new Exception("Register doesnt exist");
+        }
     }
 }
