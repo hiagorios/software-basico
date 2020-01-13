@@ -26,23 +26,26 @@ the symbol table and the opcodes table
  */
 public class Assembler {
 
-    private static HashMap<Integer, String> hashmap = new HashMap<>();
-    private static List<String> lines = new ArrayList<>();
+    // MNEMONICO | 1OPERANDO | 2OPERANDO | OPCODEHEXA | COMPRIMENTO
+    private HashMap<String, HashMap<String, HashMap<String, String[]>>> opcodeTable = new HashMap<>();
+    // ROTULO | ILC
+    private HashMap<String, Long> labelTable = new HashMap<>();
+    // CONSTANT | VALUE
+    private HashMap<String, Long> constTable = new HashMap<>();
+    
+    private List<String> lines = new ArrayList<>();
+    
+    private static Long ilc;
 
     public static void main(String[] args) {
         Assembler asb = new Assembler();
-        //asb.readSource("cyclicHanoi.asm");
+        ilc = (long) 0;
+        asb.firstPass("cyclicHanoi.asm");
+        asb.secondPass("cyclicHanoi.asm");
         //asb.writeFile("output.txt");
-
-        String test = "mov eax, ebx";
-        /*
-        for (String s : asb.getArgs(test)) {
-            System.out.println(s);
-        }
-         */
     }
 
-    public void readSource(String path) {
+    public void firstPass(String path) {
         Scanner reader;
         boolean isSectionData = false;
         try {
@@ -54,7 +57,7 @@ public class Assembler {
                     if (line.contains("section")) {
                         isSectionData = line.contains("data");
                     } else if (isInclude(line)) {
-                        readSource(getIncludeFile(line));
+                        firstPass(getIncludeFile(line));
                     } else {
                         if (isLabel(line)) {
                             if (isSectionData) {
@@ -67,6 +70,31 @@ public class Assembler {
                             addConstant(line);
                         } else if (isVariable(line)) {
                             addVariable(line);
+                        }
+                    }
+                }
+            }
+            reader.close();
+        } catch (FileNotFoundException e) {
+            System.out.println("Source file not found: " + path);
+            System.exit(0);
+        }
+    }
+    
+    public void secondPass(String path) {
+        Scanner reader;
+        try {
+            reader = new Scanner(new FileReader("src/montador/" + path));
+            while (reader.hasNextLine()) {
+                String line = removeComments(reader.nextLine());
+                line = removeIdentation(line);
+                if (line != null && !line.isEmpty()) {
+                    if (isInclude(line)) {
+                        secondPass(getIncludeFile(line));
+                    } else {
+                        if (!line.contains("section") && !isLabel(line) && !isConstant(line) && !isVariable(line)) {
+                            // Is instruction
+                            // Modify and write line
                         }
                     }
                 }
