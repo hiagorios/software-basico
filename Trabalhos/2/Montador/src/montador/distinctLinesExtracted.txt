@@ -1,11 +1,8 @@
 push ebp
 mov ebp,esp
 mov eax, promptDiscos
-call stringPrintLF
 mov eax, qntDiscos
 mov ebx, 4
-call inputString
-call atoi
 mov [qntDiscos], eax
 mov eax, promptOrigem
 mov eax, pinoOrigem
@@ -15,21 +12,16 @@ mov eax, pinoDestino
 mov [pinoDestino], eax
 mov ecx, [pinoOrigem]
 mov ebx, [pinoDestino]
-call aux
 push dword [pinoAuxiliar]
 push dword [pinoDestino]
 push dword [pinoOrigem]
 push dword [qntDiscos]
-call clock
-call exit
 mov eax, showAuxiliar
-call stringPrint
 mov eax, ecx
 mov ecx, 6
 sub ecx, eax
 sub ecx, ebx
 mov [pinoAuxiliar], eax
-call intPrintLF
 ret
 mov eax,[ebp+8]
 cmp eax,0x0
@@ -39,10 +31,8 @@ push dword [ebp+20]
 push dword [ebp+12]
 dec eax
 push dword eax
-call anti
 add esp,16
 push dword [ebp+8]
-call imprimePasso
 add esp,12
 jmp fim
 mov esp,ebp
