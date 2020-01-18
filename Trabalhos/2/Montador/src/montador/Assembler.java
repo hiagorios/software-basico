@@ -26,8 +26,8 @@ the symbol table and the opcodes table
  */
 public class Assembler {
 
-    // MNEMONICO | 1OPERANDO | 2OPERANDO | OPCODEHEXA | COMPRIMENTO
-    private HashMap<String, HashMap<String, HashMap<String, String[]>>> opcodeTable = new HashMap<>();
+    // INSTRUCAO | OPCODEHEXA | COMPRIMENTO
+    private HashMap<String, String[]> opcodeTable = new HashMap<>();
     // ROTULO | ILC
     private HashMap<String, Long> labelTable = new HashMap<>();
     // CONSTANT | VALUE
@@ -40,9 +40,10 @@ public class Assembler {
     public static void main(String[] args) {
         Assembler asb = new Assembler();
         ilc = (long) 0;
+        asb.readOPCodes("OPCodes.txt");
         asb.firstPass("cyclicHanoi.asm");
-        asb.secondPass("cyclicHanoi.asm");
-        //asb.writeFile("output.txt");
+        // asb.secondPass("cyclicHanoi.asm");
+        // asb.writeFile("output.txt");
     }
 
     public void firstPass(String path) {
@@ -117,7 +118,9 @@ public class Assembler {
             reader = new Scanner(new FileReader("src/montador/" + path));
             while (reader.hasNextLine()) {
                 String line = reader.nextLine();
-                // opcodesTable.add(line);
+                String[] array = line.split("\\|");
+                String[] aux = {array[1].trim(), array[2].trim()};
+                opcodeTable.put(array[0].trim(), aux);
             }
             reader.close();
         } catch (FileNotFoundException e) {
@@ -152,8 +155,8 @@ public class Assembler {
     }
 
     public int getInstructionSize(String line) {
-        String[] args = getArgs(line);
-        return 1 + (args.length > 0 ? args.length : 0);
+        // procurar na tabela
+        return 0;
     }
 
     public String getMnemonic(String line) {
