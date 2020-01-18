@@ -65,11 +65,16 @@ public class Assembler {
                                 // ler as proximas linhas até achar o NULL
                             } else {
                                 addLabel(line);
+                                // o ILC dela é o ILC da prox linha
+                                // (primeira instução dps da label)
                             }
                         } else if (isConstant(line)) {
                             addConstant(line);
                         } else if (isVariable(line)) {
                             addVariable(line);
+                            // tem que alocar memoria
+                        } else {
+                            // is instruction
                         }
                     }
                 }
@@ -168,9 +173,13 @@ public class Assembler {
         //Testar
         return line.contains(":"); // && !line.contains("_");
     }
+    
+    public boolean isData(String line) {
+        return line.contains("db");
+    }
 
     public boolean isVariable(String line) {
-        return line.contains("db");
+        return line.contains("resb");
     }
 
     public boolean isConstant(String line) {

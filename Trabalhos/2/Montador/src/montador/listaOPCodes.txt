@@ -1,45 +1,45 @@
-add esp,12 | 83 c4 0c
-add esp,16 | 83 c4 10
-add al, '0' | 04 30
-cmp eax,0x0 | 83 f8 00
-dec eax | 48
-jle fim | 0f 8e aa 00 00 00
-jmp fim | eb 6e
-mov ebp,esp | 89 e5
-mov eax, promptDiscos | b8 00 00 00 00
-mov eax, qntDiscos | b8 00 00 00 00
-mov ebx, 4 | bb 04 00 00 00
-mov [qntDiscos], eax | a3 00 00 00 00
-mov eax, promptOrigem | b8 20 00 00 00
-mov eax, pinoOrigem | b8 04 00 00 00
-mov [pinoOrigem], eax | a3 04 00 00 00
-mov eax, promptDestino | b8 4a 00 00 00
-mov eax, pinoDestino | b8 0c 00 00 00
-mov [pinoDestino], eax | a3 0c 00 00 00
-mov ecx, [pinoOrigem] | 8b 0d 04 00 00 00
-mov ebx, [pinoDestino] | 8b 1d 0c 00 00 00
-mov eax, showAuxiliar | b8 3a 00 00 00
-mov eax, ecx | 89 c8
-mov ecx, 6 | b9 06 00 00 00
-mov eax,[ebp+8] | 8b 45 08
-mov [pinoAuxiliar], eax | a3 08 00 00 00
-mov [origem], al | a2 83 00 00 00
-mov eax, [ebp+16] | 8b 45 10
-mov esp,ebp | 89 ec
-mov [destino], al | a2 8a 00 00 00
-mov eax, [ebp+12] | 8b 45 0c
-mov eax, outputMovimentos | b8 6f 00 00 00
-pop ebp | 5d
-push dword [pinoAuxiliar] | ff 35 08 00 00 00
-push dword [pinoDestino] | ff 35 0c 00 00 00
-push dword [pinoOrigem] | ff 35 04 00 00 00   
-push dword [qntDiscos] | ff 35 00 00 00 00
-push dword [ebp+16] | ff 75 10
-push dword [ebp+20] | ff 75 14
-push dword [ebp+12] | ff 75 0c
-push ebp | 55
-push dword eax | 50
-push dword [ebp+8] | ff 75 08
-ret | c3
-sub ecx, eax | 29 c1
-sub ecx, ebx | 29 d9
+add esp,12 | 83 c4 0c | 3
+add esp,16 | 83 c4 10 | 3
+add al, '0' | 04 30 | 2
+cmp eax,0x0 | 83 f8 00 | 3
+dec eax | 48 | 1
+jle fim | 0f 8e aa 00 00 00 | 6
+jmp fim | eb 6e | 2
+mov ebp,esp | 89 e5 | 2
+mov eax, promptDiscos | b8 00 00 00 00 | 5
+mov eax, qntDiscos | b8 00 00 00 00 | 5
+mov ebx, 4 | bb 04 00 00 00 | 5
+mov [qntDiscos], eax | a3 00 00 00 00 | 5
+mov eax, promptOrigem | b8 20 00 00 00 | 5
+mov eax, pinoOrigem | b8 04 00 00 00 | 5
+mov [pinoOrigem], eax | a3 04 00 00 00 | 5
+mov eax, promptDestino | b8 4a 00 00 00 | 5
+mov eax, pinoDestino | b8 0c 00 00 00 | 5
+mov [pinoDestino], eax | a3 0c 00 00 00 | 5
+mov ecx, [pinoOrigem] | 8b 0d 04 00 00 00 | 6
+mov ebx, [pinoDestino] | 8b 1d 0c 00 00 00 | 6
+mov eax, showAuxiliar | b8 3a 00 00 00 | 5
+mov eax, ecx | 89 c8 | 2
+mov ecx, 6 | b9 06 00 00 00 | 5
+mov eax,[ebp+8] | 8b 45 08 | 3
+mov [pinoAuxiliar], eax | a3 08 00 00 00 | 5
+mov [origem], al | a2 83 00 00 00 | 5
+mov eax, [ebp+16] | 8b 45 10 | 3
+mov esp,ebp | 89 ec | 2
+mov [destino], al | a2 8a 00 00 00 | 5
+mov eax, [ebp+12] | 8b 45 0c | 3
+mov eax, outputMovimentos | b8 6f 00 00 00 | 5
+pop ebp | 5d | 1
+push dword [pinoAuxiliar] | ff 35 08 00 00 00 | 6
+push dword [pinoDestino] | ff 35 0c 00 00 00 | 6
+push dword [pinoOrigem] | ff 35 04 00 00 00 | 6
+push dword [qntDiscos] | ff 35 00 00 00 00 | 6
+push dword [ebp+16] | ff 75 10 | 3
+push dword [ebp+20] | ff 75 14 | 3
+push dword [ebp+12] | ff 75 0c | 3
+push ebp | 55 | 1
+push dword eax | 50 | 1
+push dword [ebp+8] | ff 75 08 | 3
+ret | c3 | 1
+sub ecx, eax | 29 c1 | 2
+sub ecx, ebx | 29 d9 | 2
