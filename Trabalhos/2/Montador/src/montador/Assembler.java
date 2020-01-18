@@ -37,6 +37,8 @@ public class Assembler {
 
     private static Long ilc;
 
+    private String lastLabel;
+
     public static void main(String[] args) {
         Assembler asb = new Assembler();
         ilc = (long) 0;
@@ -63,6 +65,7 @@ public class Assembler {
                         if (isSectionData) {
                             // tratar os db que usam label
                             // ler as proximas linhas até achar o NULL
+                            // TODO
                         } else {
                             if (isLabel(line)) {
                                 addLabel(line);
@@ -71,6 +74,7 @@ public class Assembler {
                             } else if (isVariable(line)) {
                                 addVariable(line);
                                 // tem que alocar memoria
+                                // TODO
                             } else {
                                 // is instruction
                                 ilc += getInstructionSize(line);
@@ -99,11 +103,14 @@ public class Assembler {
                         isSectionData = line.contains("data");
                     } else if (isInclude(line)) {
                         secondPass(getIncludeFile(line));
-                    } else {
-                        if (!isSectionData && !isLabel(line) && !isConstant(line) && !isVariable(line)) {
-                            // Is instruction
-                            // Modify and write line
+                    } else if (isLabel(line)) {
+                        if (!line.contains(".")) {
+                            lastLabel = line;
                         }
+                    } else if (!isSectionData && !isConstant(line) && !isVariable(line)) {
+                        // Is instruction
+                        // Modify and write line
+                        // TODO
                     }
                 }
             }
@@ -145,11 +152,17 @@ public class Assembler {
     }
 
     public void addConstant(String line) {
-        //TODO
+        String[] aux = line.split("equ");
+        constTable.put(aux[0].trim(), Long.parseLong(aux[1].trim()));
     }
 
     public void addLabel(String line) {
-        //TODO
+        if (!line.contains(".")) {
+            lastLabel = line;
+            labelTable.put(line, ilc);
+        } else {
+            labelTable.put(lastLabel + line, ilc);
+        }
     }
 
     public void addVariable(String line) {
@@ -177,9 +190,35 @@ public class Assembler {
         return args.split(", ");
     }
 
+    public int getRegValue(String reg) throws Exception {
+        switch (reg) {
+            case "eax":
+                return 0;
+            case "ebx":
+                return 3;
+            case "ecx":
+                return 1;
+            case "edx":
+                return 2;
+            case "ebp":
+                return 5;
+            case "esp":
+                return 4;
+            case "esi":
+                return 6;
+            case "edi":
+                return 7;
+            case "al":
+                return 0;
+            case "bl":
+                return 3;
+            default:
+                throw new Exception("Register doesnt exist");
+        }
+    }
+
     public boolean isLabel(String line) {
-        //Testar
-        return line.contains(":"); // && !line.contains("_");
+        return line.contains(":");
     }
 
     public boolean isData(String line) {
@@ -208,32 +247,5 @@ public class Assembler {
 
     public String getIncludeFile(String line) {
         return line.split("'")[1].split("'")[0];
-    }
-
-    public int getRegValue(String reg) throws Exception {
-        switch (reg) {
-            case "eax":
-                return 0;
-            case "ebx":
-                return 3;
-            case "ecx":
-                return 1;
-            case "edx":
-                return 2;
-            case "ebp":
-                return 5;
-            case "esp":
-                return 4;
-            case "esi":
-                return 6;
-            case "edi":
-                return 7;
-            case "al":
-                return 0;
-            case "bl":
-                return 3;
-            default:
-                throw new Exception("Register doesnt exist");
-        }
     }
 }
