@@ -40,10 +40,11 @@ public class Assembler {
     public static void main(String[] args) {
         Assembler asb = new Assembler();
         ilc = (long) 0;
-        asb.readOPCodes("OPCodes.txt");
-        asb.firstPass("cyclicHanoi.asm");
+        asb.linhasSemRep("cyclicHanoi.asm");
+        // asb.readOPCodes("OPCodes.txt");
+        // asb.firstPass("cyclicHanoi.asm");
         // asb.secondPass("cyclicHanoi.asm");
-        // asb.writeFile("output.txt");
+        asb.writeFile("output.txt");
     }
 
     public void firstPass(String path) {
@@ -76,6 +77,7 @@ public class Assembler {
                             // tem que alocar memoria
                         } else {
                             // is instruction
+                            ilc += getInstructionSize(line);
                         }
                     }
                 }
@@ -129,6 +131,32 @@ public class Assembler {
         }
     }
 
+    public void linhasSemRep(String path){
+        Scanner reader;
+        try {
+            reader = new Scanner(new FileReader("src/montador/" + path));
+            while (reader.hasNextLine()) {
+                String line = removeComments(reader.nextLine());
+                line = removeIdentation(line);
+                if (line != null && !line.isEmpty()) {
+                    if (isInclude(line)) {
+                        linhasSemRep(getIncludeFile(line));
+                    } else {
+                        if (!line.contains("section") && !isLabel(line) && !isConstant(line) && !isVariable(line)) {
+                            if (!lines.contains(line + " | " + path)){
+                                lines.add(line + " | " + path);
+                            }
+                        }
+                    }
+                }
+            }
+            reader.close();
+        } catch (FileNotFoundException e) {
+            System.out.println("Source file not found: " + path);
+            System.exit(0);
+        }
+    }
+    
     public void writeFile(String name) {
         try {
             PrintWriter writer = new PrintWriter(new File("src/montador/" + name));
@@ -155,8 +183,17 @@ public class Assembler {
     }
 
     public int getInstructionSize(String line) {
-        // procurar na tabela
-        return 0;
+        System.out.println(line);
+        if (!opcodeTable.containsKey(line)){
+            System.out.println("fodase");
+        }
+        String aux = opcodeTable.get(line)[1];
+        int inteiro = Integer.parseInt(aux);
+        return inteiro;
+    }
+    
+    public String getInstructionHexa(String line) {
+        return opcodeTable.get(line)[0];
     }
 
     public String getMnemonic(String line) {

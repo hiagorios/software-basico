@@ -43,3 +43,62 @@ push dword [ebp+8] | ff 75 08 | 3
 ret | c3 | 1
 sub ecx, eax | 29 c1 | 2
 sub ecx, ebx | 29 d9 | 2
+
+mov eax, 1
+mov ebx, 0
+int 0x80
+mov ebx, STD_IN
+mov eax, SYS_READ
+push ebx
+mov ebx, eax
+cmp byte [eax], 0
+jz .finished
+inc eax
+jmp .nextchar
+sub eax, ebx
+pop ebx
+ret
+push edx
+push ecx
+push eax
+call stringLen
+mov edx, eax
+pop eax
+mov ecx, eax
+mov ebx, 1
+mov eax, 4
+int 80h
+pop ecx
+pop edx
+call stringPrint
+mov eax, 0Ah
+mov eax, esp
+push esi
+mov ecx, 0
+inc ecx
+mov edx, 0
+mov esi, 10
+idiv esi
+add edx, 48
+cmp eax, 0
+jnz .divideLoop
+dec ecx
+cmp ecx, 0
+jnz .printLoop
+pop esi
+call intPrint
+mov esi, eax
+mov eax, 0
+xor ebx, ebx
+mov bl, [esi+ecx]
+cmp bl, 48
+jl .finished
+cmp bl, 57
+jg .finished
+sub bl, 48
+add eax, ebx
+mov ebx, 10
+mul ebx
+jmp .multiplyLoop
+div ebx
+mov edx, ebx
