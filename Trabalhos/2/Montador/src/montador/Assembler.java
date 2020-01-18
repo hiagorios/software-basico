@@ -32,17 +32,16 @@ public class Assembler {
     private HashMap<String, Long> labelTable = new HashMap<>();
     // CONSTANT | VALUE
     private HashMap<String, Long> constTable = new HashMap<>();
-    
+
     private List<String> lines = new ArrayList<>();
-    
+
     private static Long ilc;
 
     public static void main(String[] args) {
         Assembler asb = new Assembler();
         ilc = (long) 0;
-        asb.linhasSemRep("cyclicHanoi.asm");
-        // asb.readOPCodes("OPCodes.txt");
-        // asb.firstPass("cyclicHanoi.asm");
+        asb.readOPCodes("OPCodes.txt");
+        asb.firstPass("cyclicHanoi.asm");
         // asb.secondPass("cyclicHanoi.asm");
         asb.writeFile("output.txt");
     }
@@ -55,29 +54,27 @@ public class Assembler {
             while (reader.hasNextLine()) {
                 String line = removeComments(reader.nextLine());
                 line = removeIdentation(line);
-                if (line != null && !line.isEmpty()) {
+                if (line != null && !line.isEmpty() && !line.contains("global _start")) {
                     if (line.contains("section")) {
                         isSectionData = line.contains("data");
                     } else if (isInclude(line)) {
                         firstPass(getIncludeFile(line));
                     } else {
-                        if (isLabel(line)) {
-                            if (isSectionData) {
-                                // tratar os db que usam label
-                                // ler as proximas linhas até achar o NULL
-                            } else {
-                                addLabel(line);
-                                // o ILC dela é o ILC da prox linha
-                                // (primeira instução dps da label)
-                            }
-                        } else if (isConstant(line)) {
-                            addConstant(line);
-                        } else if (isVariable(line)) {
-                            addVariable(line);
-                            // tem que alocar memoria
+                        if (isSectionData) {
+                            // tratar os db que usam label
+                            // ler as proximas linhas até achar o NULL
                         } else {
-                            // is instruction
-                            ilc += getInstructionSize(line);
+                            if (isLabel(line)) {
+                                addLabel(line);
+                            } else if (isConstant(line)) {
+                                addConstant(line);
+                            } else if (isVariable(line)) {
+                                addVariable(line);
+                                // tem que alocar memoria
+                            } else {
+                                // is instruction
+                                ilc += getInstructionSize(line);
+                            }
                         }
                     }
                 }
@@ -88,19 +85,22 @@ public class Assembler {
             System.exit(0);
         }
     }
-    
+
     public void secondPass(String path) {
         Scanner reader;
+        boolean isSectionData = false;
         try {
             reader = new Scanner(new FileReader("src/montador/" + path));
             while (reader.hasNextLine()) {
                 String line = removeComments(reader.nextLine());
                 line = removeIdentation(line);
-                if (line != null && !line.isEmpty()) {
-                    if (isInclude(line)) {
+                if (line != null && !line.isEmpty() && !line.contains("global _start")) {
+                    if (line.contains("section")) {
+                        isSectionData = line.contains("data");
+                    } else if (isInclude(line)) {
                         secondPass(getIncludeFile(line));
                     } else {
-                        if (!line.contains("section") && !isLabel(line) && !isConstant(line) && !isVariable(line)) {
+                        if (!isSectionData && !isLabel(line) && !isConstant(line) && !isVariable(line)) {
                             // Is instruction
                             // Modify and write line
                         }
@@ -131,32 +131,6 @@ public class Assembler {
         }
     }
 
-    public void linhasSemRep(String path){
-        Scanner reader;
-        try {
-            reader = new Scanner(new FileReader("src/montador/" + path));
-            while (reader.hasNextLine()) {
-                String line = removeComments(reader.nextLine());
-                line = removeIdentation(line);
-                if (line != null && !line.isEmpty()) {
-                    if (isInclude(line)) {
-                        linhasSemRep(getIncludeFile(line));
-                    } else {
-                        if (!line.contains("section") && !isLabel(line) && !isConstant(line) && !isVariable(line)) {
-                            if (!lines.contains(line + " | " + path)){
-                                lines.add(line + " | " + path);
-                            }
-                        }
-                    }
-                }
-            }
-            reader.close();
-        } catch (FileNotFoundException e) {
-            System.out.println("Source file not found: " + path);
-            System.exit(0);
-        }
-    }
-    
     public void writeFile(String name) {
         try {
             PrintWriter writer = new PrintWriter(new File("src/montador/" + name));
@@ -183,15 +157,9 @@ public class Assembler {
     }
 
     public int getInstructionSize(String line) {
-        System.out.println(line);
-        if (!opcodeTable.containsKey(line)){
-            System.out.println("fodase");
-        }
-        String aux = opcodeTable.get(line)[1];
-        int inteiro = Integer.parseInt(aux);
-        return inteiro;
+        return Integer.parseInt(opcodeTable.get(line)[1]);
     }
-    
+
     public String getInstructionHexa(String line) {
         return opcodeTable.get(line)[0];
     }
@@ -213,7 +181,7 @@ public class Assembler {
         //Testar
         return line.contains(":"); // && !line.contains("_");
     }
-    
+
     public boolean isData(String line) {
         return line.contains("db");
     }

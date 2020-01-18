@@ -3,9 +3,18 @@ add esp,16 | 83 c4 10 | 3
 add eax, ebx | 01 d8 | 2
 add edx, 48 | 83 c2 30 | 3
 add al, '0' | 04 30 | 2
-call stringLen | e8 e8 ff ff ff
+call stringLen | e8 e8 ff ff ff | 5
 call stringPrint | e8 dd ff ff ff | 5
 call intPrint | e8 c9 ff ff ff | 5
+call stringPrintLF | e8 39 ff ff ff | 5
+call inputString | e8 c2 ff ff ff | 5
+call atoi | e8 7e ff ff ff | 5
+call aux | e8 22 00 00 00 | 5
+call clock | e8 27 00 00 00 | 5
+call anti | e8 2c 00 00 00 | 5
+call imprimePasso | e8 8d 00 00 00 | 5
+call exit | e8 45 ff ff ff | 5
+call intPrintLF | e8 bf fe ff ff | 5
 cmp eax,0x0 | 83 f8 00 | 3
 cmp bl, 48 | 80 fb 30 | 3
 cmp bl, 57 | 80 fb 39 | 3
@@ -15,12 +24,12 @@ cmp byte [eax], 0 | 80 38 00 | 3
 dec eax | 48 | 1
 dec ecx | 49 | 1
 div ebx | f7 f3 | 2
-idiv esi | f7 fe
+idiv esi | f7 fe | 2
 inc eax | 40 | 1
 inc ecx | 41 | 1
 int 0x80 | cd 80 | 2
 int 80h | cd 80 | 2
-jg .finished | 7f 0f | 
+jg .finished | 7f 0f | 2
 jle fim | 0f 8e aa 00 00 00 | 6
 jl .finished | 7c 14 | 2
 jmp fim | eb 6e | 2
@@ -54,7 +63,7 @@ mov eax, [ebp+16] | 8b 45 10 | 3
 mov esp,ebp | 89 ec | 2
 mov [destino], al | a2 8a 00 00 00 | 5
 mov eax, [ebp+12] | 8b 45 0c | 3
-mov eax, outputMovimentos | b8 6f 00 00 00 | 5
+mov eax, outputMovimento | b8 6f 00 00 00 | 5
 mov ebx, STD_IN | bb 00 00 00 00 | 5
 mov eax, SYS_READ | b8 03 00 00 00 | 5
 mov ebx, eax | 89 c3 | 2
