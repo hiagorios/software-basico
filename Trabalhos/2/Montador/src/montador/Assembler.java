@@ -44,7 +44,7 @@ public class Assembler {
         ilc = (long) 0;
         asb.readOPCodes("OPCodes.txt");
         asb.firstPass("cyclicHanoi.asm");
-        // asb.secondPass("cyclicHanoi.asm");
+        asb.secondPass("cyclicHanoi.asm");
         asb.writeFile("output.txt");
     }
 
@@ -72,9 +72,8 @@ public class Assembler {
                             } else if (isConstant(line)) {
                                 addConstant(line);
                             } else if (isVariable(line)) {
-                                addVariable(line);
-                                // tem que alocar memoria
                                 // TODO
+                                addVariable(line);
                             } else {
                                 // is instruction
                                 ilc += getInstructionSize(line);
@@ -105,12 +104,27 @@ public class Assembler {
                         secondPass(getIncludeFile(line));
                     } else if (isLabel(line)) {
                         if (!line.contains(".")) {
-                            lastLabel = line;
+                            lastLabel = line.substring(0, line.length() - 1);
                         }
                     } else if (!isSectionData && !isConstant(line) && !isVariable(line)) {
                         // Is instruction
                         // Modify and write line
-                        // TODO
+                        String[] args = getArgs(line);
+                        String changedLine = "";
+                        for (int i = 0; i < args.length; i++) {
+                            // check if instruction reference a local label
+                            if (args[i].contains(".")) {
+                                // if so, search lastLabel + local in labelsTable
+                                changedLine = line.replaceFirst(args[i], labelTable.get(lastLabel + args[i]).toString());
+                            } else if (labelTable.containsKey(args[i])) {
+                                changedLine = line.replaceFirst(args[i], labelTable.get(args[i]).toString());
+                            } else if (constTable.containsKey(args[i])) {
+                                changedLine = line.replaceFirst(args[i], constTable.get(args[i]).toString());
+                            }
+                        }
+                        changedLine = (changedLine.length() > 0) ? changedLine : line;
+                        lines.add(opcodeTable.get(line)[0] + "\t\t" + changedLine);
+                        // TODO  
                     }
                 }
             }
@@ -158,15 +172,16 @@ public class Assembler {
 
     public void addLabel(String line) {
         if (!line.contains(".")) {
-            lastLabel = line;
-            labelTable.put(line, ilc);
+            lastLabel = line.substring(0, line.length() - 1);
+            labelTable.put(lastLabel, ilc);
         } else {
-            labelTable.put(lastLabel + line, ilc);
+            labelTable.put(lastLabel + line.substring(0, line.length() - 1), ilc);
         }
     }
 
     public void addVariable(String line) {
-        //TODO
+        // TODO
+        // tem que alocar memoria
     }
 
     public int getInstructionSize(String line) {
@@ -186,8 +201,11 @@ public class Assembler {
             // instruction has no args
             return new String[0];
         }
-        String args = line.substring(getMnemonic(line).length() + 1); //separating mnemonic from
-        return args.split(", ");
+        String [] args = line.substring(getMnemonic(line).length() + 1).split(","); //separating mnemonic from
+        for (int i = 0; i < args.length; i++){
+            args[i] = args[i].trim();
+        }
+        return args;
     }
 
     public int getRegValue(String reg) throws Exception {
