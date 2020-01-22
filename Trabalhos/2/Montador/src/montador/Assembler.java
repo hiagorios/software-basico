@@ -32,6 +32,10 @@ public class Assembler {
     private HashMap<String, Long> labelTable = new HashMap<>();
     // CONSTANT | VALUE
     private HashMap<String, Long> constTable = new HashMap<>();
+    // NAME | VALUE
+    private HashMap<String, String> dataTable = new HashMap<>();
+    // NAME | ILC
+    private HashMap<String, Long> varTable = new HashMap<>();
 
     private List<String> lines = new ArrayList<>();
 
@@ -63,16 +67,13 @@ public class Assembler {
                         firstPass(getIncludeFile(line));
                     } else {
                         if (isSectionData) {
-                            // tratar os db que usam label
-                            // ler as proximas linhas até achar o NULL
-                            // TODO
+                            addData(line);
                         } else {
                             if (isLabel(line)) {
                                 addLabel(line);
                             } else if (isConstant(line)) {
                                 addConstant(line);
                             } else if (isVariable(line)) {
-                                // TODO
                                 addVariable(line);
                             } else {
                                 // is instruction
@@ -112,7 +113,7 @@ public class Assembler {
                         String[] args = getArgs(line);
                         String changedLine = "";
                         for (int i = 0; i < args.length; i++) {
-                            // check if instruction reference a local label
+                            // check if instruction references a local label
                             if (args[i].contains(".")) {
                                 // if so, search lastLabel + local in labelsTable
                                 changedLine = line.replaceFirst(args[i], labelTable.get(lastLabel + args[i]).toString());
@@ -120,7 +121,11 @@ public class Assembler {
                                 changedLine = line.replaceFirst(args[i], labelTable.get(args[i]).toString());
                             } else if (constTable.containsKey(args[i])) {
                                 changedLine = line.replaceFirst(args[i], constTable.get(args[i]).toString());
-                            }
+                            } else if (varTable.containsKey(args[i])) {
+                                changedLine = line.replaceFirst(args[i], varTable.get(args[i]).toString());
+                            } else if (dataTable.containsKey(args[i])) {
+                                changedLine = line.replaceFirst(args[i], dataTable.get(args[i]));
+                            } 
                         }
                         changedLine = (changedLine.length() > 0) ? changedLine : line;
                         lines.add(opcodeTable.get(line)[0] + "\t\t" + changedLine);
@@ -179,9 +184,22 @@ public class Assembler {
         }
     }
 
+    public void addData(String line) {
+        String[] s = line.split(" ");
+        if (s.length >= 3) {
+            dataTable.put(s[0], s[2] + "0");
+            ilc += Long.parseLong(s[2]);
+        } else {
+            // tratar os db que usam label
+            // ler as proximas linhas até achar o NULL
+        }
+    }
+
     public void addVariable(String line) {
-        // TODO
-        // tem que alocar memoria
+        // resb
+        String[] s = line.split(" ");
+        varTable.put(s[0], ilc);
+        ilc += Long.parseLong(s[2]);
     }
 
     public int getInstructionSize(String line) {
@@ -201,8 +219,8 @@ public class Assembler {
             // instruction has no args
             return new String[0];
         }
-        String [] args = line.substring(getMnemonic(line).length() + 1).split(","); //separating mnemonic from
-        for (int i = 0; i < args.length; i++){
+        String[] args = line.substring(getMnemonic(line).length() + 1).split(","); //separating mnemonic from
+        for (int i = 0; i < args.length; i++) {
             args[i] = args[i].trim();
         }
         return args;
@@ -237,10 +255,6 @@ public class Assembler {
 
     public boolean isLabel(String line) {
         return line.contains(":");
-    }
-
-    public boolean isData(String line) {
-        return line.contains("db");
     }
 
     public boolean isVariable(String line) {
