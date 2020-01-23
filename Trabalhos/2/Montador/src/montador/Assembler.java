@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
@@ -67,7 +68,7 @@ public class Assembler {
                         firstPass(getIncludeFile(line));
                     } else {
                         if (isSectionData) {
-                            addData(line);
+                            addData(line, reader);
                         } else {
                             if (isLabel(line)) {
                                 addLabel(line);
@@ -113,6 +114,10 @@ public class Assembler {
                         String[] args = getArgs(line);
                         String changedLine = "";
                         for (int i = 0; i < args.length; i++) {
+                            if (args[i].contains("[")) {
+                                //removing brackets
+                                args[i] = args[i].substring(1, args[i].length() - 1);
+                            }
                             // check if instruction references a local label
                             if (args[i].contains(".")) {
                                 // if so, search lastLabel + local in labelsTable
@@ -125,7 +130,7 @@ public class Assembler {
                                 changedLine = line.replaceFirst(args[i], varTable.get(args[i]).toString());
                             } else if (dataTable.containsKey(args[i])) {
                                 changedLine = line.replaceFirst(args[i], dataTable.get(args[i]));
-                            } 
+                            }
                         }
                         changedLine = (changedLine.length() > 0) ? changedLine : line;
                         lines.add(opcodeTable.get(line)[0] + "\t\t" + changedLine);
@@ -184,14 +189,27 @@ public class Assembler {
         }
     }
 
-    public void addData(String line) {
-        String[] s = line.split(" ");
-        if (s.length >= 3) {
-            dataTable.put(s[0], s[2] + "0");
-            ilc += Long.parseLong(s[2]);
+    public void addData(String line, Scanner reader) {
+        if (line.contains("'")) {
+            dataTable.put(line.split(" ")[0], line.split("'")[1] + "0");
+            ilc += line.split("'")[1].length() + 1; //we add 1 because of the 0 at the end of string
         } else {
-            // tratar os db que usam label
-            // ler as proximas linhas até achar o NULL
+            // treat dbs with label
+            if (line.contains("outputMovimento:")) {
+                line = line.concat(removeIdentation(reader.nextLine()));
+                String[] s = line.split("db");
+                dataTable.put(s[0].split(":")[0], s[1].split("\"")[1]);
+                ilc += s[1].split("\"")[1].length();
+            } else if (line.contains("origem:")) {
+                line = line.concat(removeIdentation(reader.nextLine()));
+                String[] s = line.split("db");
+                dataTable.put(s[0].split(":")[0], " " + s[2].split("\"")[1]);
+                ilc += s[2].split("\"")[1].length() + 1;
+            } else if (line.contains("destino:")) {
+                String[] s = line.split("db");
+                dataTable.put(s[0].split(":")[0], s[1].split("\"")[1] + "0");
+                ilc += s[1].split("\"")[1].length() + 1;
+            }
         }
     }
 
@@ -219,11 +237,17 @@ public class Assembler {
             // instruction has no args
             return new String[0];
         }
-        String[] args = line.substring(getMnemonic(line).length() + 1).split(","); //separating mnemonic from
-        for (int i = 0; i < args.length; i++) {
-            args[i] = args[i].trim();
+        //separating mnemonic from args
+        line = line.substring(getMnemonic(line).length() + 1);
+        List<String> args = new ArrayList<>();
+        for (String arg : line.split(",")) {
+            for (String cleanArg : arg.split(" ")) {
+                if (!cleanArg.isEmpty()){
+                    args.add(cleanArg);
+                }
+            }
         }
-        return args;
+        return args.toArray(new String[0]);
     }
 
     public int getRegValue(String reg) throws Exception {

@@ -106,65 +106,65 @@ cd 80		int 80h
 c3		ret
 55		push ebp
 89 e5		mov ebp,esp
-b8 00 00 00 00		mov eax, promptDiscos
+b8 00 00 00 00		mov eax, Digite a quantidade de discos: 0
 e8 39 ff ff ff		call 45
-b8 00 00 00 00		mov eax, qntDiscos
+b8 00 00 00 00		mov eax, 371
 bb 04 00 00 00		mov ebx, 4
 e8 c2 ff ff ff		call 197
-b8 00 00 00 00		mov eax, qntDiscos
+b8 00 00 00 00		mov eax, 371
 e8 7e ff ff ff		call 139
-a3 00 00 00 00		mov [qntDiscos], eax
-b8 20 00 00 00		mov eax, promptOrigem
+a3 00 00 00 00		mov [371], eax
+b8 20 00 00 00		mov eax, Digite o pino de origem: 0
 e8 39 ff ff ff		call 45
-b8 04 00 00 00		mov eax, pinoOrigem
+b8 04 00 00 00		mov eax, 375
 bb 04 00 00 00		mov ebx, 4
 e8 c2 ff ff ff		call 197
-b8 04 00 00 00		mov eax, pinoOrigem
+b8 04 00 00 00		mov eax, 375
 e8 7e ff ff ff		call 139
-a3 04 00 00 00		mov [pinoOrigem], eax
-b8 4a 00 00 00		mov eax, promptDestino
+a3 04 00 00 00		mov [375], eax
+b8 4a 00 00 00		mov eax, Digite o pino de destino: 0
 e8 39 ff ff ff		call 45
-b8 0c 00 00 00		mov eax, pinoDestino
+b8 0c 00 00 00		mov eax, 383
 bb 04 00 00 00		mov ebx, 4
 e8 c2 ff ff ff		call 197
-b8 0c 00 00 00		mov eax, pinoDestino
+b8 0c 00 00 00		mov eax, 383
 e8 7e ff ff ff		call 139
-a3 0c 00 00 00		mov [pinoDestino], eax
-8b 0d 04 00 00 00		mov ecx, [pinoOrigem]
-8b 1d 0c 00 00 00		mov ebx, [pinoDestino]
-e8 22 00 00 00		call 405
-ff 35 08 00 00 00		push dword [pinoAuxiliar]
-ff 35 0c 00 00 00		push dword [pinoDestino]
-ff 35 04 00 00 00		push dword [pinoOrigem]
-ff 35 00 00 00 00		push dword [qntDiscos]
-e8 27 00 00 00		call 439
+a3 0c 00 00 00		mov [383], eax
+8b 0d 04 00 00 00		mov ecx, [375]
+8b 1d 0c 00 00 00		mov ebx, [383]
+e8 22 00 00 00		call 561
+ff 35 08 00 00 00		push dword [379]
+ff 35 0c 00 00 00		push dword [383]
+ff 35 04 00 00 00		push dword [375]
+ff 35 00 00 00 00		push dword [371]
+e8 27 00 00 00		call 595
 e8 45 ff ff ff		call 218
-b8 3a 00 00 00		mov eax, showAuxiliar
+b8 3a 00 00 00		mov eax, Pino auxiliar: 0
 e8 dd ff ff ff		call 15
 89 c8		mov eax, ecx
 b9 06 00 00 00		mov ecx, 6
 29 c1		sub ecx, eax
 29 d9		sub ecx, ebx
 89 c8		mov eax, ecx
-a3 08 00 00 00		mov [pinoAuxiliar], eax
+a3 08 00 00 00		mov [379], eax
 e8 bf fe ff ff		call 117
 c3		ret
 55		push ebp
 89 e5		mov ebp,esp
 8b 45 08		mov eax,[ebp+8]
 83 f8 00		cmp eax,0x0
-0f 8e aa 00 00 00		jle 628
+0f 8e aa 00 00 00		jle 784
 ff 75 10		push dword [ebp+16]
 ff 75 14		push dword [ebp+20]
 ff 75 0c		push dword [ebp+12]
 48		dec eax
 50		push dword eax
-e8 2c 00 00 00		call 514
+e8 2c 00 00 00		call 670
 83 c4 10		add esp,16
 ff 75 10		push dword [ebp+16]
 ff 75 0c		push dword [ebp+12]
 ff 75 08		push dword [ebp+8]
-e8 8d 00 00 00		call 632
+e8 8d 00 00 00		call 788
 83 c4 0c		add esp,12
 ff 75 0c		push dword [ebp+12]
 ff 75 10		push dword [ebp+16]
@@ -172,25 +172,25 @@ ff 75 14		push dword [ebp+20]
 8b 45 08		mov eax,[ebp+8]
 48		dec eax
 50		push dword eax
-e8 2c 00 00 00		call 514
+e8 2c 00 00 00		call 670
 83 c4 10		add esp,16
-eb 6e		jmp 628
+eb 6e		jmp 784
 55		push ebp
 89 e5		mov ebp,esp
 8b 45 08		mov eax,[ebp+8]
 83 f8 00		cmp eax,0x0
-0f 8e aa 00 00 00		jle 628
+0f 8e aa 00 00 00		jle 784
 ff 75 14		push dword [ebp+20]
 ff 75 10		push dword [ebp+16]
 ff 75 0c		push dword [ebp+12]
 48		dec eax
 50		push dword eax
-e8 2c 00 00 00		call 514
+e8 2c 00 00 00		call 670
 83 c4 10		add esp,16
 ff 75 14		push dword [ebp+20]
 ff 75 0c		push dword [ebp+12]
 ff 75 08		push dword [ebp+8]
-e8 8d 00 00 00		call 632
+e8 8d 00 00 00		call 788
 83 c4 0c		add esp,12
 ff 75 14		push dword [ebp+20]
 ff 75 0c		push dword [ebp+12]
@@ -198,12 +198,12 @@ ff 75 10		push dword [ebp+16]
 8b 45 08		mov eax,[ebp+8]
 48		dec eax
 50		push dword eax
-e8 27 00 00 00		call 439
+e8 27 00 00 00		call 595
 83 c4 10		add esp,16
 ff 75 10		push dword [ebp+16]
 ff 75 14		push dword [ebp+20]
 ff 75 08		push dword [ebp+8]
-e8 8d 00 00 00		call 632
+e8 8d 00 00 00		call 788
 83 c4 0c		add esp,12
 ff 75 14		push dword [ebp+20]
 ff 75 10		push dword [ebp+16]
@@ -211,9 +211,9 @@ ff 75 0c		push dword [ebp+12]
 8b 45 08		mov eax,[ebp+8]
 48		dec eax
 50		push dword eax
-e8 2c 00 00 00		call 514
+e8 2c 00 00 00		call 670
 83 c4 10		add esp,16
-eb 6e		jmp 628
+eb 6e		jmp 784
 89 ec		mov esp,ebp
 5d		pop ebp
 c3		ret
@@ -221,11 +221,11 @@ c3		ret
 89 e5		mov ebp,esp
 8b 45 0c		mov eax, [ebp+12]
 04 30		add al, '0'
-a2 83 00 00 00		mov [origem], al
+a2 83 00 00 00		mov [  para ], al
 8b 45 10		mov eax, [ebp+16]
 04 30		add al, '0'
-a2 8a 00 00 00		mov [destino], al
-b8 6f 00 00 00		mov eax, outputMovimento
+a2 8a 00 00 00		mov [ 0], al
+b8 6f 00 00 00		mov eax, Movendo um disco de 
 e8 39 ff ff ff		call 45
 89 ec		mov esp,ebp
 5d		pop ebp
