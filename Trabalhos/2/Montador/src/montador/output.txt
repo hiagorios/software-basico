@@ -1,232 +1,232 @@
-53		push ebx
-89 c3		mov ebx, eax
-80 38 00		cmp byte [eax], 0
-74 03		jz 11
-40		inc eax
-eb f8		jmp 3
-29 d8		sub eax, ebx
-5b		pop ebx
-c3		ret
-52		push edx
-51		push ecx
-53		push ebx
-50		push eax
-e8 e8 ff ff ff		call 0
-89 c2		mov edx, eax
-58		pop eax
-89 c1		mov ecx, eax
-bb 01 00 00 00		mov ebx, 1
-b8 04 00 00 00		mov eax, 4
-cd 80		int 80h
-5b		pop ebx
-59		pop ecx
-5a		pop edx
-c3		ret
-e8 dd ff ff ff		call 15
-50		push eax
-b8 0a 00 00 00		mov eax, 0Ah
-50		push eax
-89 e0		mov eax, esp
-e8 dd ff ff ff		call 15
-58		pop eax
-58		pop eax
-c3		ret
-50		push eax
-51		push ecx
-52		push edx
-56		push esi
-b9 00 00 00 00		mov ecx, 0
-41		inc ecx
-ba 00 00 00 00		mov edx, 0
-be 0a 00 00 00		mov esi, 10
-f7 fe		idiv esi
-83 c2 30		add edx, 48
-52		push edx
-83 f8 00		cmp eax, 0
-75 ea		jnz 76
-49		dec ecx
-89 e0		mov eax, esp
-e8 dd ff ff ff		call 15
-58		pop eax
-83 f9 00		cmp ecx, 0
-75 f2		jnz 98
-5e		pop esi
-5a		pop edx
-59		pop ecx
-58		pop eax
-c3		ret
-e8 c9 ff ff ff		call 67
-50		push eax
-b8 0a 00 00 00		mov eax, 0Ah
-50		push eax
-89 e0		mov eax, esp
-e8 dd ff ff ff		call 15
-58		pop eax
-58		pop eax
-c3		ret
-53		push ebx
-51		push ecx
-52		push edx
-56		push esi
-89 c6		mov esi, eax
-b8 00 00 00 00		mov eax, 0
-b9 00 00 00 00		mov ecx, 0
-31 db		xor ebx, ebx
-8a 1c 0e		mov bl, [esi+ecx]
-80 fb 30		cmp bl, 48
-7c 14		jl 185
-80 fb 39		cmp bl, 57
-7f 0f		jg 185
-80 eb 30		sub bl, 48
-01 d8		add eax, ebx
-bb 0a 00 00 00		mov ebx, 10
-f7 e3		mul ebx
-41		inc ecx
-eb e2		jmp 155
-bb 0a 00 00 00		mov ebx, 10
-f7 f3		div ebx
-5e		pop esi
-5a		pop edx
-59		pop ecx
-5b		pop ebx
-c3		ret
-51		push ecx
-52		push edx
-89 c1		mov ecx, eax
-89 da		mov edx, ebx
-b8 03 00 00 00		mov eax, 3
-bb 00 00 00 00		mov ebx, 0
-cd 80		int 0x80
-5a		pop edx
-59		pop ecx
-c3		ret
-bb 00 00 00 00		mov ebx, 0
-b8 01 00 00 00		mov eax, 1
-cd 80		int 80h
-c3		ret
-55		push ebp
-89 e5		mov ebp,esp
-b8 00 00 00 00		mov eax, Digite a quantidade de discos: 0
-e8 39 ff ff ff		call 45
-b8 00 00 00 00		mov eax, 371
-bb 04 00 00 00		mov ebx, 4
-e8 c2 ff ff ff		call 197
-b8 00 00 00 00		mov eax, 371
-e8 7e ff ff ff		call 139
-a3 00 00 00 00		mov [371], eax
-b8 20 00 00 00		mov eax, Digite o pino de origem: 0
-e8 39 ff ff ff		call 45
-b8 04 00 00 00		mov eax, 375
-bb 04 00 00 00		mov ebx, 4
-e8 c2 ff ff ff		call 197
-b8 04 00 00 00		mov eax, 375
-e8 7e ff ff ff		call 139
-a3 04 00 00 00		mov [375], eax
-b8 4a 00 00 00		mov eax, Digite o pino de destino: 0
-e8 39 ff ff ff		call 45
-b8 0c 00 00 00		mov eax, 383
-bb 04 00 00 00		mov ebx, 4
-e8 c2 ff ff ff		call 197
-b8 0c 00 00 00		mov eax, 383
-e8 7e ff ff ff		call 139
-a3 0c 00 00 00		mov [383], eax
-8b 0d 04 00 00 00		mov ecx, [375]
-8b 1d 0c 00 00 00		mov ebx, [383]
-e8 22 00 00 00		call 561
-ff 35 08 00 00 00		push dword [379]
-ff 35 0c 00 00 00		push dword [383]
-ff 35 04 00 00 00		push dword [375]
-ff 35 00 00 00 00		push dword [371]
-e8 27 00 00 00		call 595
-e8 45 ff ff ff		call 218
-b8 3a 00 00 00		mov eax, Pino auxiliar: 0
-e8 dd ff ff ff		call 15
-89 c8		mov eax, ecx
-b9 06 00 00 00		mov ecx, 6
-29 c1		sub ecx, eax
-29 d9		sub ecx, ebx
-89 c8		mov eax, ecx
-a3 08 00 00 00		mov [379], eax
-e8 bf fe ff ff		call 117
-c3		ret
-55		push ebp
-89 e5		mov ebp,esp
-8b 45 08		mov eax,[ebp+8]
-83 f8 00		cmp eax,0x0
-0f 8e aa 00 00 00		jle 784
-ff 75 10		push dword [ebp+16]
-ff 75 14		push dword [ebp+20]
-ff 75 0c		push dword [ebp+12]
-48		dec eax
-50		push dword eax
-e8 2c 00 00 00		call 670
-83 c4 10		add esp,16
-ff 75 10		push dword [ebp+16]
-ff 75 0c		push dword [ebp+12]
-ff 75 08		push dword [ebp+8]
-e8 8d 00 00 00		call 788
-83 c4 0c		add esp,12
-ff 75 0c		push dword [ebp+12]
-ff 75 10		push dword [ebp+16]
-ff 75 14		push dword [ebp+20]
-8b 45 08		mov eax,[ebp+8]
-48		dec eax
-50		push dword eax
-e8 2c 00 00 00		call 670
-83 c4 10		add esp,16
-eb 6e		jmp 784
-55		push ebp
-89 e5		mov ebp,esp
-8b 45 08		mov eax,[ebp+8]
-83 f8 00		cmp eax,0x0
-0f 8e aa 00 00 00		jle 784
-ff 75 14		push dword [ebp+20]
-ff 75 10		push dword [ebp+16]
-ff 75 0c		push dword [ebp+12]
-48		dec eax
-50		push dword eax
-e8 2c 00 00 00		call 670
-83 c4 10		add esp,16
-ff 75 14		push dword [ebp+20]
-ff 75 0c		push dword [ebp+12]
-ff 75 08		push dword [ebp+8]
-e8 8d 00 00 00		call 788
-83 c4 0c		add esp,12
-ff 75 14		push dword [ebp+20]
-ff 75 0c		push dword [ebp+12]
-ff 75 10		push dword [ebp+16]
-8b 45 08		mov eax,[ebp+8]
-48		dec eax
-50		push dword eax
-e8 27 00 00 00		call 595
-83 c4 10		add esp,16
-ff 75 10		push dword [ebp+16]
-ff 75 14		push dword [ebp+20]
-ff 75 08		push dword [ebp+8]
-e8 8d 00 00 00		call 788
-83 c4 0c		add esp,12
-ff 75 14		push dword [ebp+20]
-ff 75 10		push dword [ebp+16]
-ff 75 0c		push dword [ebp+12]
-8b 45 08		mov eax,[ebp+8]
-48		dec eax
-50		push dword eax
-e8 2c 00 00 00		call 670
-83 c4 10		add esp,16
-eb 6e		jmp 784
-89 ec		mov esp,ebp
-5d		pop ebp
-c3		ret
-55		push ebp
-89 e5		mov ebp,esp
-8b 45 0c		mov eax, [ebp+12]
-04 30		add al, '0'
-a2 83 00 00 00		mov [  para ], al
-8b 45 10		mov eax, [ebp+16]
-04 30		add al, '0'
-a2 8a 00 00 00		mov [ 0], al
-b8 6f 00 00 00		mov eax, Movendo um disco de 
-e8 39 ff ff ff		call 45
-89 ec		mov esp,ebp
-5d		pop ebp
-c3		ret
+53
+89 c3
+80 38 00
+74 03
+40
+eb f8
+29 d8
+5b
+c3
+52
+51
+53
+50
+e8 e8 ff ff ff
+89 c2
+58
+89 c1
+bb 01 00 00 00
+b8 04 00 00 00
+cd 80
+5b
+59
+5a
+c3
+e8 dd ff ff ff
+50
+b8 0a 00 00 00
+50
+89 e0
+e8 dd ff ff ff
+58
+58
+c3
+50
+51
+52
+56
+b9 00 00 00 00
+41
+ba 00 00 00 00
+be 0a 00 00 00
+f7 fe
+83 c2 30
+52
+83 f8 00
+75 ea
+49
+89 e0
+e8 dd ff ff ff
+58
+83 f9 00
+75 f2
+5e
+5a
+59
+58
+c3
+e8 c9 ff ff ff
+50
+b8 0a 00 00 00
+50
+89 e0
+e8 dd ff ff ff
+58
+58
+c3
+53
+51
+52
+56
+89 c6
+b8 00 00 00 00
+b9 00 00 00 00
+31 db
+8a 1c 0e
+80 fb 30
+7c 14
+80 fb 39
+7f 0f
+80 eb 30
+01 d8
+bb 0a 00 00 00
+f7 e3
+41
+eb e2
+bb 0a 00 00 00
+f7 f3
+5e
+5a
+59
+5b
+c3
+51
+52
+89 c1
+89 da
+b8 03 00 00 00
+bb 00 00 00 00
+cd 80
+5a
+59
+c3
+bb 00 00 00 00
+b8 01 00 00 00
+cd 80
+c3
+55
+89 e5
+b8 00 00 00 00
+e8 39 ff ff ff
+b8 00 00 00 00
+bb 04 00 00 00
+e8 c2 ff ff ff
+b8 00 00 00 00
+e8 7e ff ff ff
+a3 00 00 00 00
+b8 20 00 00 00
+e8 39 ff ff ff
+b8 04 00 00 00
+bb 04 00 00 00
+e8 c2 ff ff ff
+b8 04 00 00 00
+e8 7e ff ff ff
+a3 04 00 00 00
+b8 4a 00 00 00
+e8 39 ff ff ff
+b8 0c 00 00 00
+bb 04 00 00 00
+e8 c2 ff ff ff
+b8 0c 00 00 00
+e8 7e ff ff ff
+a3 0c 00 00 00
+8b 0d 04 00 00 00
+8b 1d 0c 00 00 00
+e8 22 00 00 00
+ff 35 08 00 00 00
+ff 35 0c 00 00 00
+ff 35 04 00 00 00
+ff 35 00 00 00 00
+e8 27 00 00 00
+e8 45 ff ff ff
+b8 3a 00 00 00
+e8 dd ff ff ff
+89 c8
+b9 06 00 00 00
+29 c1
+29 d9
+89 c8
+a3 08 00 00 00
+e8 bf fe ff ff
+c3
+55
+89 e5
+8b 45 08
+83 f8 00
+0f 8e aa 00 00 00
+ff 75 10
+ff 75 14
+ff 75 0c
+48
+50
+e8 2c 00 00 00
+83 c4 10
+ff 75 10
+ff 75 0c
+ff 75 08
+e8 8d 00 00 00
+83 c4 0c
+ff 75 0c
+ff 75 10
+ff 75 14
+8b 45 08
+48
+50
+e8 2c 00 00 00
+83 c4 10
+eb 6e
+55
+89 e5
+8b 45 08
+83 f8 00
+0f 8e aa 00 00 00
+ff 75 14
+ff 75 10
+ff 75 0c
+48
+50
+e8 2c 00 00 00
+83 c4 10
+ff 75 14
+ff 75 0c
+ff 75 08
+e8 8d 00 00 00
+83 c4 0c
+ff 75 14
+ff 75 0c
+ff 75 10
+8b 45 08
+48
+50
+e8 27 00 00 00
+83 c4 10
+ff 75 10
+ff 75 14
+ff 75 08
+e8 8d 00 00 00
+83 c4 0c
+ff 75 14
+ff 75 10
+ff 75 0c
+8b 45 08
+48
+50
+e8 2c 00 00 00
+83 c4 10
+eb 6e
+89 ec
+5d
+c3
+55
+89 e5
+8b 45 0c
+04 30
+a2 83 00 00 00
+8b 45 10
+04 30
+a2 8a 00 00 00
+b8 6f 00 00 00
+e8 39 ff ff ff
+89 ec
+5d
+c3

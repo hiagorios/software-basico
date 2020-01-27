@@ -112,7 +112,7 @@ public class Assembler {
                         // Is instruction
                         // Modify and write line
                         String[] args = getArgs(line);
-                        String changedLine = "";
+                        String changed = "";
                         for (int i = 0; i < args.length; i++) {
                             if (args[i].contains("[")) {
                                 //removing brackets
@@ -121,19 +121,19 @@ public class Assembler {
                             // check if instruction references a local label
                             if (args[i].contains(".")) {
                                 // if so, search lastLabel + local in labelsTable
-                                changedLine = line.replaceFirst(args[i], labelTable.get(lastLabel + args[i]).toString());
+                                changed = line.replaceFirst(args[i], labelTable.get(lastLabel + args[i]).toString());
                             } else if (labelTable.containsKey(args[i])) {
-                                changedLine = line.replaceFirst(args[i], labelTable.get(args[i]).toString());
+                                changed = line.replaceFirst(args[i], labelTable.get(args[i]).toString());
                             } else if (constTable.containsKey(args[i])) {
-                                changedLine = line.replaceFirst(args[i], constTable.get(args[i]).toString());
+                                changed = line.replaceFirst(args[i], constTable.get(args[i]).toString());
                             } else if (varTable.containsKey(args[i])) {
-                                changedLine = line.replaceFirst(args[i], varTable.get(args[i]).toString());
+                                changed = line.replaceFirst(args[i], varTable.get(args[i]).toString());
                             } else if (dataTable.containsKey(args[i])) {
-                                changedLine = line.replaceFirst(args[i], dataTable.get(args[i]));
+                                changed = line.replaceFirst(args[i], dataTable.get(args[i]));
                             }
                         }
-                        changedLine = (changedLine.length() > 0) ? changedLine : line;
-                        lines.add(opcodeTable.get(line)[0] + "\t\t" + changedLine);
+                        changed = (changed.length() > 0) ? changed : line;
+                        lines.add(opcodeTable.get(line)[0]);
                         // TODO  
                     }
                 }
@@ -165,8 +165,12 @@ public class Assembler {
     public void writeFile(String name) {
         try {
             PrintWriter writer = new PrintWriter(new File("src/montador/" + name));
+            List<String> pairs = new ArrayList<>();
             for (String line : lines) {
-                writer.println(line);
+                pairs.addAll(Arrays.asList(line.split(" ")));
+                if (pairs.size() >= 2) {
+                    // TODO: writer.println(pairs.get(0) + pairs.get(1));
+                }
             }
             writer.close();
         } catch (FileNotFoundException ex) {
@@ -242,7 +246,7 @@ public class Assembler {
         List<String> args = new ArrayList<>();
         for (String arg : line.split(",")) {
             for (String cleanArg : arg.split(" ")) {
-                if (!cleanArg.isEmpty()){
+                if (!cleanArg.isEmpty()) {
                     args.add(cleanArg);
                 }
             }
