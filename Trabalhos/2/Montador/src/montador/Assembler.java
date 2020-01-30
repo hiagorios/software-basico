@@ -50,7 +50,7 @@ public class Assembler {
         asb.readOPCodes("OPCodes.txt");
         asb.firstPass("cyclicHanoi.asm");
         asb.secondPass("cyclicHanoi.asm");
-        asb.writeFile("output.txt");
+        asb.writeFile("output.o");
     }
 
     public void firstPass(String path) {
@@ -165,18 +165,63 @@ public class Assembler {
     public void writeFile(String name) {
         try {
             PrintWriter writer = new PrintWriter(new File("src/montador/" + name));
+
             List<String> pairs = new ArrayList<>();
+            
+            //Reading initial default code
+            pairs.addAll(readDefaultCode("default_inicial.txt"));
+
             for (String line : lines) {
                 pairs.addAll(Arrays.asList(line.split(" ")));
-                if (pairs.size() >= 2) {
-                    // TODO: writer.println(pairs.get(0) + pairs.get(1));
-                }
             }
+
+            //Reading final default code
+            pairs.addAll(readDefaultCode("default_final.txt"));
+            
+            // Write file
+            int i = 0;
+            while (pairs.size() >= i + 15) {
+                // writing full blocks
+                writer.println(pairs.get(i) + pairs.get(i + 1) + " "
+                        + pairs.get(i + 2) + pairs.get(i + 3) + " "
+                        + pairs.get(i + 4) + pairs.get(i + 5) + " "
+                        + pairs.get(i + 6) + pairs.get(i + 7) + " "
+                        + pairs.get(i + 8) + pairs.get(i + 9) + " "
+                        + pairs.get(i + 10) + pairs.get(i + 11) + " "
+                        + pairs.get(i + 12) + pairs.get(i + 13) + " "
+                        + pairs.get(i + 14) + pairs.get(i + 15));
+                i += 16;
+            }
+
             writer.close();
         } catch (FileNotFoundException ex) {
             System.out.println("Could not create the file " + name);
             System.exit(-1);
         }
+    }
+
+    public List<String> readDefaultCode(String path) {
+        Scanner reader;
+        try {
+            reader = new Scanner(new FileReader("src/montador/" + path));
+            List<String> lines = new ArrayList<>();
+            while (reader.hasNextLine()) {
+                for (String str : reader.nextLine().split(" ")){
+                    if (str.length() == 4){
+                        lines.add(str.substring(0, 2));
+                        lines.add(str.substring(2, 4));
+                    } else {
+                        lines.add(str);
+                    }
+                }
+            }
+            reader.close();
+            return lines;
+        } catch (FileNotFoundException e) {
+            System.out.println("Default code not found.");
+            System.exit(0);
+        }
+        return null;
     }
 
     public void addConstant(String line) {
